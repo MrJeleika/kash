@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Platform, ScrollView, ScrollViewProps, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ScrollViewWithFadeProps extends ScrollViewProps {
   enableFade?: boolean;
@@ -25,6 +26,8 @@ export const ScrollViewWithFade = ({
   style,
   ...props
 }: ScrollViewWithFadeProps) => {
+  const { left, right } = useSafeAreaInsets();
+
   const solidColor = hexToRgba(fadeColor, fadeOpacity);
   const transparentColor = hexToRgba(fadeColor, 0);
 
@@ -32,7 +35,10 @@ export const ScrollViewWithFade = ({
     <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
       <ScrollView
         {...props}
-        style={[{ flex: 1 }, style]}
+        style={[
+          { flex: 1, paddingLeft: left + 4, paddingRight: right + 4 },
+          style,
+        ]}
         fadingEdgeLength={
           Platform.OS === 'android' && enableFade ? fadeLength : 0
         }

@@ -1,5 +1,6 @@
 export { cn, generateUuid } from './utils';
 export { reduceSaturation } from './colors.utils';
+export { formatNumberWithSpaces } from './text.utils';
 export {
   TEXT_ANIMATION_CONFIG,
   textAppearConfig,

@@ -2,7 +2,6 @@ import { Category } from '@/types/categories';
 import { Icon } from '../ui/icon';
 import { StyleProp, ViewStyle } from 'react-native';
 import { reduceColorSaturation } from '@/utils/colors';
-import { cn } from '@MrJeleika/utils';
 import React from 'react';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
 

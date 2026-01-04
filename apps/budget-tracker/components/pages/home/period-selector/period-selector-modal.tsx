@@ -1,0 +1,58 @@
+import { Header } from '@/components/common/header';
+import { ModalBase, ModalBaseRef } from '@/components/common/modal-base';
+import { useModalsStore } from '@/store/modals';
+import { useRef } from 'react';
+import { Text, View } from 'react-native';
+import { getPeriodConfigs } from './config';
+import { Button } from '@/components/ui/button/button';
+import { PeriodConfig } from '@/types/periods';
+import { useTransactionsStore } from '@/store/transactions';
+import { cn } from '@MrJeleika/utils';
+
+export const PeriodSelectorModal = () => {
+  const modalRef = useRef<ModalBaseRef>(null);
+  const { setPeriod, period: currentPeriod } = useTransactionsStore();
+  const { periodSelectorModalOpen, setPeriodSelectorModalOpen } =
+    useModalsStore();
+
+  const handleClose = () => {
+    modalRef.current?.close();
+  };
+
+  const handlePeriodSelect = (period: PeriodConfig) => {
+    handleClose();
+    setPeriod(period);
+  };
+
+  return (
+    <ModalBase
+      ref={modalRef}
+      isOpen={periodSelectorModalOpen}
+      onClose={() => setPeriodSelectorModalOpen(false)}
+    >
+      <Header title="Select period" closeButtonAction={handleClose} />
+      <View className="flex flex-row flex-wrap gap-2 pt-28">
+        {getPeriodConfigs().map((period) => (
+          <Button
+            key={period.label}
+            onPress={() => handlePeriodSelect(period)}
+            variant={
+              period.label === currentPeriod.label ? 'default' : 'secondary'
+            }
+            className="rounded-xl px-4 py-3"
+          >
+            <Text
+              className={cn(
+                period.label === currentPeriod.label
+                  ? 'text-black'
+                  : 'text-white'
+              )}
+            >
+              {period.label}
+            </Text>
+          </Button>
+        ))}
+      </View>
+    </ModalBase>
+  );
+};

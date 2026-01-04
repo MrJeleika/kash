@@ -28,7 +28,7 @@ export function DateSelector({ date, onPress }: DateSelectorProps) {
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-center bg-zinc-900 rounded-2xl px-5 py-3 active:opacity-70"
+      className="flex-row items-center justify-center bg-dark-gray rounded-2xl px-5 py-3 active:opacity-70"
     >
       <Icon icon={Calendar} className="text-white mr-2" size={18} />
       <Text className="text-white text-sm font-medium">{formatDate(date)}</Text>

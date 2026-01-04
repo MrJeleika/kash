@@ -43,7 +43,7 @@ export const VoiceInput = () => {
         tint="light"
         className="h-full w-full pointer-events-none"
       >
-        <TextRecognition voiceInputOpen={voiceInputOpen} />
+        {voiceInputOpen && <TextRecognition voiceInputOpen={voiceInputOpen} />}
       </BlurView>
     </Animated.View>
   );

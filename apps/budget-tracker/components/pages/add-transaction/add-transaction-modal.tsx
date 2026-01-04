@@ -11,53 +11,66 @@ import { SelectTransactionType } from '@/components/common/select-transaction-ty
 import { Keyboard } from '@/components/ui/keyboard/keyboard';
 import { AnimatedText, cn } from '@MrJeleika/utils';
 import SelectCategory from './category/select-category';
-import { WalletSelector } from './wallet-selector';
 import { DateSelector } from './date-selector';
 import { CurrencyBadge } from './currency-badge';
-import { NoteInput } from './note-input';
 import { MoreHorizontal } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { useCurrencyRateCalculator } from '@/hooks/currencies/useCurrencyRateCalculator';
+import { Input } from '@/components/ui/input/input';
+import { useScreenKeyboardHandlers } from '@/hooks/keyboard/useScreenKeyboardHandlers';
+import { useCategoriesStore } from '@/store/categories';
 
-interface AddTransactionModalProps {
-  defaultType?: TransactionType;
-}
-
-export function AddTransactionModal({ defaultType }: AddTransactionModalProps) {
+export function AddTransactionModal() {
   const modalRef = useRef<ModalBaseRef>(null);
-  const addTransactionOpen = useModalsStore(
-    (state) => state.addTransactionOpen
-  );
-  const setAddTransactionOpen = useModalsStore(
-    (state) => state.setAddTransactionOpen
-  );
-  const addTransaction = useTransactionsStore((state) => state.addTransaction);
+  const { categories } = useCategoriesStore();
+  const {
+    setAddTransactionOpen,
+    addTransactionOpen,
+    setTransactionToEdit,
+    transactionToEdit,
+  } = useModalsStore();
+
+  const { addTransaction, updateTransaction } = useTransactionsStore();
   const { currency: defaultCurrency } = useCurrencyStore();
 
-  const [type, setType] = useState<TransactionType>(defaultType || 'expense');
-  const [categoryName, setCategoryName] = useState('');
-  const [amount, setAmount] = useState('0');
-  const [currency, setCurrency] = useState(defaultCurrency.toUpperCase());
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [note, setNote] = useState('');
-  const walletBalance = '434.8';
+  const [type, setType] = useState<TransactionType>(
+    transactionToEdit?.type || 'expense'
+  );
+  const [categoryName, setCategoryName] = useState(
+    transactionToEdit?.categoryName || categories[0]?.name || ''
+  );
 
-  useEffect(() => {
-    if (defaultType) {
-      setType(defaultType);
-    }
-  }, [defaultType]);
+  const {
+    amount,
+    handleKeyboardClick,
+    handleBackspace,
+    handleLongPress,
+    setAmount,
+  } = useScreenKeyboardHandlers(transactionToEdit?.amount.toString() || '0');
+  const [currency, setCurrency] = useState(
+    transactionToEdit?.currency || defaultCurrency
+  );
+  const [date, setDate] = useState(
+    transactionToEdit?.date || new Date().toISOString().split('T')[0]
+  );
+  const [note, setNote] = useState(transactionToEdit?.note || '');
+
+  const { amountInBaseCurrency } = useCurrencyRateCalculator(currency, amount);
+
+  const isDifferentCurrency = currency !== defaultCurrency;
 
   useEffect(() => {
     if (addTransactionOpen) {
-      // Reset form when modal opens
-      setType(defaultType || 'expense');
-      setCategoryName('');
-      setAmount('0');
-      setCurrency(defaultCurrency.toUpperCase());
-      setDate(new Date().toISOString().split('T')[0]);
-      setNote('');
+      setType(transactionToEdit?.type || 'expense');
+      setCategoryName(transactionToEdit?.categoryName || '');
+      setAmount(transactionToEdit?.amount.toString() || '0');
+      setCurrency(transactionToEdit?.currency || defaultCurrency);
+      setDate(
+        transactionToEdit?.date || new Date().toISOString().split('T')[0]
+      );
+      setNote(transactionToEdit?.note || '');
     }
-  }, [addTransactionOpen, defaultType, defaultCurrency]);
+  }, [addTransactionOpen, defaultCurrency, setAmount, transactionToEdit]);
 
   const handleClose = () => {
     modalRef.current?.close();
@@ -65,62 +78,65 @@ export function AddTransactionModal({ defaultType }: AddTransactionModalProps) {
 
   const handleSubmit = () => {
     if (!categoryName || !amount || !date) {
+      console.log('Missing required fields');
+      return;
+    }
+
+    if (isDifferentCurrency && !amountInBaseCurrency) {
+      console.log('Missing amount in base currency');
       return;
     }
 
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum) || amountNum <= 0) {
+      console.log('Invalid amount');
       return;
     }
 
-    addTransaction({
-      type,
-      categoryName,
-      amount: amountNum,
-      amountInBaseCurrency: amountNum, // Assuming same currency for now
-      currency,
-      date,
-      note: note || undefined,
-    });
+    const isExpense = type === 'expense';
 
+    const amountInBaseCurrencyNum = isDifferentCurrency
+      ? Number(amountInBaseCurrency)
+      : amountNum;
+
+    if (transactionToEdit) {
+      updateTransaction(transactionToEdit.id, {
+        amount: isExpense ? amountNum : -amountNum,
+        amountInBaseCurrency: isExpense
+          ? -amountInBaseCurrencyNum
+          : amountInBaseCurrencyNum,
+        currency,
+        date,
+        note: note || undefined,
+      });
+    } else {
+      addTransaction({
+        type,
+        categoryName,
+        amount: isExpense ? -amountNum : amountNum,
+        amountInBaseCurrency: isExpense
+          ? -amountInBaseCurrencyNum
+          : amountInBaseCurrencyNum,
+        currency,
+        date,
+        note: note || undefined,
+        baseCurrency: defaultCurrency,
+      });
+    }
+
+    setTransactionToEdit(null);
     handleClose();
   };
 
-  const handleKeyboardClick = (key: string) => {
-    if (amount.length > 18) return;
-
-    if (key === ',') {
-      // Handle decimal point
-      if (!amount.includes('.')) {
-        setAmount(amount === '0' ? '0.' : amount + '.');
-      }
-    } else {
-      if (amount === '0') {
-        setAmount(key);
-      } else {
-        setAmount(amount + key);
-      }
-    }
-  };
-
-  const handleBackspace = () => {
-    if (amount.length === 1) {
-      setAmount('0');
-    } else {
-      setAmount(amount.slice(0, -1));
-    }
-  };
-
-  const handleLongPress = () => {
-    setAmount('0');
-  };
   return (
     <ModalBase
       ref={modalRef}
       isOpen={addTransactionOpen}
-      onClose={() => setAddTransactionOpen(false)}
+      onClose={() => {
+        setAddTransactionOpen(false);
+        setTransactionToEdit(null);
+      }}
     >
-      {/* Header */}
       <View className="flex-row justify-between items-center mb-6">
         <CloseButton onPress={handleClose} />
         <SelectTransactionType type={type} setType={setType} />
@@ -129,26 +145,38 @@ export function AddTransactionModal({ defaultType }: AddTransactionModalProps) {
         </Pressable>
       </View>
 
-      {/* Amount Display */}
       <View className="items-center min-h-[15vh] justify-center mb-8 mt-4">
         <AnimatedText
           className={cn(
-            'text-white text-5xl font-light',
+            'text-white text-5xl font-semibold',
             amount.length > 3 && 'text-4xl',
             amount.length > 6 && 'text-3xl',
             amount.length > 9 && 'text-2xl',
             amount.length > 12 && 'text-xl'
           )}
-          suffix={` ${currency}`}
+          suffix={` ${currency?.toUpperCase()}`}
           isNumber={true}
         >
           {amount}
         </AnimatedText>
+        {currency !== defaultCurrency && amountInBaseCurrency && (
+          <AnimatedText
+            className={cn(
+              'text-secondary-text text-2xl font-semibold',
+              amount.length > 9 && 'text-xl',
+              amount.length > 12 && 'text-lg'
+            )}
+            suffix={` ${defaultCurrency?.toUpperCase()}`}
+            isNumber={true}
+          >
+            {amountInBaseCurrency}
+          </AnimatedText>
+        )}
       </View>
 
       {/* Wallet, Date, and Currency Row */}
-      <View className="flex-row gap-2 mb-4">
-        <View className="flex-1">
+      <View className="flex-row justify-between  mb-0.5">
+        {/* <View className="flex-1">
           <WalletSelector
             walletName="Wallet"
             amount={walletBalance}
@@ -158,7 +186,7 @@ export function AddTransactionModal({ defaultType }: AddTransactionModalProps) {
               console.log('Open wallet selector');
             }}
           />
-        </View>
+        </View> */}
         <DateSelector
           date={date}
           onPress={() => {
@@ -166,22 +194,21 @@ export function AddTransactionModal({ defaultType }: AddTransactionModalProps) {
             console.log('Open date picker');
           }}
         />
-        <CurrencyBadge
-          currency={currency}
-          onPress={() => {
-            // TODO: Open currency selector
-            console.log('Open currency selector');
-          }}
-        />
+        <CurrencyBadge currency={currency} setCurrency={setCurrency} />
       </View>
 
       {/* Note Input */}
-      <View className="mb-4">
-        <NoteInput value={note} onChangeText={setNote} />
+      <View className="mb-0.5">
+        <Input
+          value={note}
+          className="bg-dark-gray border-0 min-h-[30px]"
+          onChangeText={setNote}
+          placeholder="Note"
+        />
       </View>
 
       {/* Category Selector */}
-      <View className="mb-4">
+      <View className="mb-2">
         <SelectCategory
           type={type}
           selectedCategory={categoryName}

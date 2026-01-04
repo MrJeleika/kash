@@ -8,12 +8,10 @@ export function SafeInsert({
   children: React.ReactNode;
   className?: string;
 }) {
-  const { bottom, top, left, right } = useSafeAreaInsets();
+  const { left, right } = useSafeAreaInsets();
   return (
     <View
       style={{
-        paddingBottom: bottom,
-        paddingTop: top,
         paddingLeft: left + 4,
         paddingRight: right + 4,
       }}

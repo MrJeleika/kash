@@ -7,6 +7,7 @@ export interface Transaction {
   date: string; // ISO string format
   note?: string;
   amount: number;
-  amountInBaseCurrency: number;
   currency: string;
+  amountInBaseCurrency: number;
+  baseCurrency: string;
 }

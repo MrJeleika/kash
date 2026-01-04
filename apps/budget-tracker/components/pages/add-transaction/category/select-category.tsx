@@ -1,17 +1,29 @@
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  Dimensions,
+  View,
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native';
+import Animated, {
+  Extrapolation,
+  SharedValue,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { CategoryIcon } from '@/components/common/category-icon';
 import { useCategoriesStore } from '@/store/categories';
 import { Category } from '@/types/categories';
 import { TransactionType } from '@/types/transactions';
-import React, { useRef, useState, useCallback } from 'react';
-import { View, FlatList, Dimensions, ViewToken } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  interpolate,
-  Extrapolation,
-  useAnimatedScrollHandler,
-  SharedValue,
-} from 'react-native-reanimated';
-import { CategoryIcon } from '@/components/common/category-icon';
 
 interface SelectCategoryProps {
   type: TransactionType;
@@ -20,78 +32,157 @@ interface SelectCategoryProps {
   onAddCategory?: () => void;
 }
 
-const ITEM_WIDTH = 40;
-const SELECTED_SCALE = 1.5;
-const ITEM_SPACING = 2;
+const ITEM_SIZE = 40;
+const GAP = 5;
+const STEP = ITEM_SIZE + GAP;
+const SELECTED_SCALE = 1.3;
+const BETWEEN_SCALE = 1.1;
+const NORMAL_SCALE = 1;
 
-interface CategoryItemProps {
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Center the item: left edge should be at screen center minus half item width
+const SIDE_PADDING = SCREEN_WIDTH / 2 - ITEM_SIZE / 2;
+
+type CategoryBubbleProps = {
   category: Category;
   index: number;
   scrollX: SharedValue<number>;
-  itemWidth: number;
-  screenWidth: number;
-}
+};
 
-const CategoryItem = ({
-  category,
-  index,
-  scrollX,
-  itemWidth,
-  screenWidth,
-}: CategoryItemProps) => {
-  const animatedStyle = useAnimatedStyle(() => {
-    // Position of this item's center
-    const itemCenter = index * itemWidth + itemWidth / 2;
+const CategoryBubble = React.memo(
+  ({ category, index, scrollX }: CategoryBubbleProps) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      'worklet';
+      const progress = scrollX.value / STEP;
+      const distance = Math.abs(progress - index);
 
-    // Current scroll position adjusted to screen center
-    const scrollCenter = scrollX.value + screenWidth / 2;
+      const scale = interpolate(
+        distance,
+        [0, 0.5, 1],
+        [SELECTED_SCALE, BETWEEN_SCALE, NORMAL_SCALE],
+        Extrapolation.CLAMP
+      );
 
-    // Distance from this item to screen center
-    const distance = Math.abs(scrollCenter - itemCenter);
+      const opacity = interpolate(
+        distance,
+        [0, 1],
+        [1, 0.6],
+        Extrapolation.CLAMP
+      );
 
-    const scale = interpolate(
-      distance,
-      [0, itemWidth],
-      [SELECTED_SCALE, 1],
-      Extrapolation.CLAMP
+      return {
+        transform: [{ scale }],
+        opacity,
+      };
+    }, [scrollX, index]);
+
+    return (
+      <View
+        style={{
+          width: ITEM_SIZE,
+          height: ITEM_SIZE * SELECTED_SCALE,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginRight: GAP,
+        }}
+      >
+        <Animated.View
+          style={[
+            {
+              width: ITEM_SIZE,
+              height: ITEM_SIZE,
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
+            animatedStyle,
+          ]}
+        >
+          <CategoryIcon
+            category={category}
+            style={{ width: ITEM_SIZE, height: ITEM_SIZE }}
+          />
+        </Animated.View>
+      </View>
     );
+  }
+);
 
-    const opacity = interpolate(
-      distance,
-      [0, itemWidth, itemWidth * 2],
-      [1, 0.7, 0.4],
-      Extrapolation.CLAMP
-    );
+CategoryBubble.displayName = 'CategoryBubble';
 
-    return {
-      transform: [{ scale }],
-      opacity,
-    };
-  });
+type CategoryLabelItemProps = {
+  category: Category;
+  index: number;
+  scrollX: SharedValue<number>;
+};
 
-  return (
-    <View
-      style={{
-        width: itemWidth,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <CategoryIcon
-        category={category}
+const CategoryLabelItem = React.memo(
+  ({ category, index, scrollX }: CategoryLabelItemProps) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      'worklet';
+      const progress = scrollX.value / STEP;
+      const distance = Math.abs(progress - index);
+
+      const opacity = interpolate(
+        distance,
+        [0, 0.35, 0.5],
+        [1, 0.2, 0],
+        Extrapolation.CLAMP
+      );
+
+      return {
+        opacity,
+        position: 'absolute',
+      };
+    }, [scrollX, index]);
+
+    return (
+      <Animated.Text
         style={[
           {
-            width: ITEM_WIDTH,
-            height: ITEM_WIDTH,
-            justifyContent: 'center',
-            alignItems: 'center',
+            fontSize: 15,
+            fontWeight: '600',
+            textAlign: 'center',
+            color: category.color,
           },
           animatedStyle,
         ]}
-      />
-    </View>
-  );
+      >
+        {category.name}
+      </Animated.Text>
+    );
+  }
+);
+
+CategoryLabelItem.displayName = 'CategoryLabelItem';
+
+type CategoryLabelProps = {
+  categories: Category[];
+  scrollX: SharedValue<number>;
 };
+
+const CategoryLabel = React.memo(
+  ({ categories, scrollX }: CategoryLabelProps) => (
+    <View
+      style={{
+        height: 28,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 8,
+      }}
+    >
+      {categories.map((category, index) => (
+        <CategoryLabelItem
+          key={category.name}
+          category={category}
+          index={index}
+          scrollX={scrollX}
+        />
+      ))}
+    </View>
+  )
+);
+
+CategoryLabel.displayName = 'CategoryLabel';
 
 const SelectCategory = ({
   type,
@@ -99,99 +190,77 @@ const SelectCategory = ({
   onSelectCategory,
 }: SelectCategoryProps) => {
   const { getCategoriesByType } = useCategoriesStore();
-  const categories = getCategoriesByType(type);
-  const flatListRef = useRef<FlatList>(null);
+  const categories = useMemo(
+    () => getCategoriesByType(type),
+    [getCategoriesByType, type]
+  );
+
+  const [isScrollViewReady, setIsScrollViewReady] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
   const scrollX = useSharedValue(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const { width } = Dimensions.get('window');
 
-  const ITEM_SIZE = ITEM_WIDTH + ITEM_SPACING;
+  const lastSelectedIndex = useRef(-1);
 
-  // Auto-select first category if none selected
-  React.useEffect(() => {
-    if (!selectedCategory && categories.length > 0) {
-      onSelectCategory(categories[0]!.name);
+  // Initialize scroll position and selection
+  useEffect(() => {
+    if (!categories.length) return;
+
+    const initialIndex =
+      selectedCategory !== undefined
+        ? categories.findIndex((cat) => cat.name === selectedCategory)
+        : 0;
+
+    const resolvedIndex = initialIndex >= 0 ? initialIndex : 0;
+    lastSelectedIndex.current = resolvedIndex;
+    const targetOffset = resolvedIndex * STEP;
+
+    if (selectedCategory === undefined || initialIndex === -1) {
+      onSelectCategory(categories[resolvedIndex]!.name);
     }
-  }, [selectedCategory, categories, onSelectCategory]);
 
-  // Sync scroll when selectedCategory changes externally
-  React.useEffect(() => {
-    if (selectedCategory) {
-      const index = categories.findIndex(
-        (item) => item?.name === selectedCategory
-      );
-      if (index >= 0 && index !== currentIndex) {
-        setCurrentIndex(index);
-        flatListRef.current?.scrollToIndex({ index, animated: true });
+    const timer = setTimeout(() => {
+      if (!isScrollViewReady) {
+        scrollViewRef.current?.scrollTo({ x: targetOffset, animated: false });
       }
-    }
-  }, [selectedCategory, categories, currentIndex]);
+      setIsScrollViewReady(true);
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
+      scrollX.value = targetOffset;
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [
+    categories,
+    selectedCategory,
+    onSelectCategory,
+    scrollX,
+    isScrollViewReady,
+  ]);
+
+  // Handle scroll events - update scrollX for animations
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const offsetX = event.nativeEvent.contentOffset.x;
+      scrollX.value = withTiming(offsetX, { duration: 0 });
     },
-  });
+    [scrollX]
+  );
 
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      if (viewableItems.length > 0) {
-        // Find the item closest to center
-        const centerX = width / 2;
-        let closestItem = viewableItems[0];
-        let minDistance = Infinity;
+  // Handle scroll end - update selection
+  const handleScrollEnd = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const offsetX = event.nativeEvent.contentOffset.x;
+      const index = Math.round(offsetX / STEP);
+      const clampedIndex = Math.min(Math.max(index, 0), categories.length - 1);
 
-        viewableItems.forEach((item) => {
-          if (item.index !== null) {
-            const itemCenter =
-              item.index * ITEM_SIZE + ITEM_SIZE / 2 - scrollX.value;
-            const distance = Math.abs(centerX - itemCenter);
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestItem = item;
-            }
-          }
-        });
-
-        if (closestItem.index !== null) {
-          const index = closestItem.index;
-          if (index !== currentIndex) {
-            setCurrentIndex(index);
-            if (categories[index]) {
-              onSelectCategory(categories[index].name);
-            }
-          }
+      if (lastSelectedIndex.current !== clampedIndex) {
+        lastSelectedIndex.current = clampedIndex;
+        const category = categories[clampedIndex];
+        if (category) {
+          onSelectCategory(category.name);
         }
       }
     },
-    [categories, onSelectCategory, width, ITEM_SIZE, scrollX, currentIndex]
-  );
-
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 10,
-  };
-
-  // Text opacity animation
-  const textOpacity = useAnimatedStyle(() => {
-    const offset = scrollX.value / ITEM_SIZE;
-    const distanceFromSnap = Math.abs(offset - Math.round(offset));
-    const opacity = interpolate(
-      distanceFromSnap,
-      [0, 0.3],
-      [1, 0],
-      Extrapolation.CLAMP
-    );
-    return { opacity };
-  });
-
-  const renderItem = ({ item, index }: { item: Category; index: number }) => (
-    <CategoryItem
-      category={item}
-      index={index}
-      scrollX={scrollX}
-      itemWidth={ITEM_SIZE}
-      screenWidth={width}
-    />
+    [categories, onSelectCategory]
   );
 
   return (
@@ -199,40 +268,35 @@ const SelectCategory = ({
       className="rounded-xl pt-3 bg-dark-gray pb-3"
       style={{ overflow: 'hidden' }}
     >
-      <View style={{ height: ITEM_WIDTH * SELECTED_SCALE + 10 }}>
-        <Animated.FlatList
-          ref={flatListRef}
-          data={categories}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.name}
+      <View style={{ height: ITEM_SIZE * SELECTED_SCALE }}>
+        <ScrollView
+          className="-translate-x-4"
+          scrollViewRef={scrollViewRef}
           horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={ITEM_SIZE}
-          snapToAlignment="center"
+          snapToInterval={STEP}
           decelerationRate="fast"
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
-            paddingHorizontal: width / 2 - ITEM_SIZE / 2,
+            paddingHorizontal: SIDE_PADDING,
+            alignItems: 'center',
           }}
-          onScroll={scrollHandler}
+          onScroll={handleScroll}
+          onMomentumScrollEnd={handleScrollEnd}
+          onScrollEndDrag={handleScrollEnd}
           scrollEventThrottle={16}
-          onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={viewabilityConfig}
-          getItemLayout={(_, index) => ({
-            length: ITEM_SIZE,
-            offset: ITEM_SIZE * index,
-            index,
-          })}
-        />
+        >
+          {categories.map((category, index) => (
+            <CategoryBubble
+              key={category.name}
+              category={category}
+              index={index}
+              scrollX={scrollX}
+            />
+          ))}
+        </ScrollView>
       </View>
-      <Animated.Text
-        style={[
-          { color: categories[currentIndex]?.color || '#FFFFFF' },
-          textOpacity,
-        ]}
-        className="text-center text-sm mt-1"
-      >
-        {categories[currentIndex]?.name}
-      </Animated.Text>
+
+      <CategoryLabel categories={categories} scrollX={scrollX} />
     </View>
   );
 };

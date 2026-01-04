@@ -3,8 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Transaction } from '@/types/transactions';
 import { generateUuid } from '@MrJeleika/utils';
+import { PeriodConfig } from '@/types/periods';
 
 interface TransactionsState {
+  period: PeriodConfig;
+  setPeriod: (period: PeriodConfig) => void;
+
   transactions: Transaction[];
   addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
   updateTransaction: (
@@ -58,11 +62,22 @@ export const useTransactionsStore = create<TransactionsState>()(
       getTransactionById: (id) => {
         return get().transactions.find((transaction) => transaction.id === id);
       },
+      period: {
+        label: 'All Time',
+        from: '1970-01-01',
+        to: new Date().toISOString(),
+      },
+      setPeriod: (period) => {
+        set({ period });
+      },
     }),
     {
       name: STORAGE_KEY,
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ transactions: state.transactions }),
+      partialize: (state) => ({
+        transactions: state.transactions,
+        period: state.period,
+      }),
     }
   )
 );

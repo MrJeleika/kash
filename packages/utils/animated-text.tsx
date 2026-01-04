@@ -1,14 +1,12 @@
-import React, { useMemo, useEffect } from 'react';
-import { View, Text, TextProps, StyleSheet, ViewStyle } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, TextProps, StyleSheet } from 'react-native';
 import Animated, {
   FadeInDown,
   FadeOutDown,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   Layout,
 } from 'react-native-reanimated';
 import { TEXT_ANIMATION_CONFIG } from './animations.utils';
+import { formatNumberWithSpaces } from './text.utils';
 import { cn } from './utils';
 
 interface AnimatedTextProps extends Omit<TextProps, 'children'> {
@@ -16,27 +14,6 @@ interface AnimatedTextProps extends Omit<TextProps, 'children'> {
   suffix?: string;
   className?: string;
   isNumber?: boolean;
-}
-
-/**
- * Formats a stringified number with spaces as thousands separators.
- */
-function formatNumberWithSpaces(value: string): string {
-  if (!value) return value;
-  const ignoreSpaces = value.replace(/\s/g, '');
-  const [whole, decimal] = ignoreSpaces.split('.');
-  const reversed = whole.split('').reverse();
-  const grouped: string[] = [];
-  for (let i = 0; i < reversed.length; i += 3) {
-    grouped.push(
-      reversed
-        .slice(i, i + 3)
-        .reverse()
-        .join('')
-    );
-  }
-  const formattedWhole = grouped.reverse().join(' ');
-  return decimal ? `${formattedWhole}.${decimal}` : formattedWhole;
 }
 
 export function AnimatedText({
@@ -51,45 +28,34 @@ export function AnimatedText({
     () => (isNumber ? formatNumberWithSpaces(children) : children),
     [children, isNumber]
   );
-  const firstCharShift = useSharedValue(0);
-
-  useEffect(() => {
-    firstCharShift.value = withTiming(
-      displayText.length >= 4 ? -TEXT_ANIMATION_CONFIG.SLIDE_DISTANCE : 0,
-      { duration: TEXT_ANIMATION_CONFIG.APPEAR_DURATION }
-    );
-  }, [displayText.length, firstCharShift]);
-
-  const shiftStyle = useAnimatedStyle<ViewStyle>(() => ({
-    transform: [{ translateX: firstCharShift.value }],
-  }));
 
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        {displayText.split('').map((char, index) => {
-          const charElement = (
-            <AnimatedChar
-              key={`${char}-${index}-${displayText.length}`}
-              char={char}
-              style={style}
-              className={className}
-              textProps={textProps}
-            />
-          );
-
-          return index === 0 ? (
-            <Animated.View key={`shift-${index}`} style={shiftStyle}>
-              {charElement}
-            </Animated.View>
-          ) : (
-            charElement
-          );
-        })}
+        {displayText.split('').map((char, index) => (
+          <AnimatedChar
+            key={`${char}-${index}-${displayText.length}`}
+            char={char}
+            style={style}
+            className={className}
+            textProps={textProps}
+          />
+        ))}
         {suffix && (
-          <Text style={style} className={className} {...textProps}>
+          <Animated.Text
+            entering={FadeInDown.duration(
+              TEXT_ANIMATION_CONFIG.APPEAR_DURATION
+            )}
+            exiting={FadeOutDown.duration(
+              TEXT_ANIMATION_CONFIG.DISAPPEAR_DURATION
+            )}
+            layout={Layout.duration(TEXT_ANIMATION_CONFIG.APPEAR_DURATION)}
+            style={style}
+            className={className}
+            {...textProps}
+          >
             {suffix}
-          </Text>
+          </Animated.Text>
         )}
       </View>
     </View>
@@ -109,6 +75,15 @@ function AnimatedChar({
   className,
   textProps,
 }: AnimatedCharProps) {
+  // Render spaces as regular text to avoid spacing issues
+  if (char === ' ') {
+    return (
+      <Text style={style} className={cn(className)} {...textProps}>
+        {char}
+      </Text>
+    );
+  }
+
   return (
     <Animated.Text
       entering={FadeInDown.duration(TEXT_ANIMATION_CONFIG.APPEAR_DURATION)}

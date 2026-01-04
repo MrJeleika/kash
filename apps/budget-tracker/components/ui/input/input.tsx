@@ -9,7 +9,7 @@ export const Input = ({ icon, className, ...props }: InputProps) => {
   return (
     <View className="relative">
       <TextInput
-        placeholderTextColor="darkgray"
+        placeholderTextColor="gray"
         textAlignVertical="bottom"
         className={cn(
           'bg-light-gray border border-gray leading-none text-white rounded-full px-4 py-3',
