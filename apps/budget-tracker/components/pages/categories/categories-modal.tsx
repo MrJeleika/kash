@@ -29,6 +29,7 @@ export const CategoriesModal = () => {
 
   return (
     <ModalBase
+      className="px-0"
       isOpen={categoriesModalOpen}
       ref={modalRef}
       onClose={() => setCategoriesModalOpen(false)}
@@ -46,7 +47,7 @@ export const CategoriesModal = () => {
           </Button>
         }
       />
-      <View className="pt-28 flex w-full items-center justify-center gap-5">
+      <View className="pt-28 flex w-full  items-center justify-center gap-5">
         <SelectTransactionType type={type} setType={setType} />
 
         <FlatList
