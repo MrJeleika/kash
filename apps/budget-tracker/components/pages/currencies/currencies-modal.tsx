@@ -59,7 +59,7 @@ export const CurrenciesModal = () => {
       <ScrollViewWithFade enableFade className="pt-20">
         <FlatList
           ListHeaderComponent={() => (
-            <Text className="text-white">Favorites</Text>
+            <Text className="text-secondary-text">Favorites</Text>
           )}
           data={favorites}
           style={{ marginBottom: 10 }}
@@ -84,7 +84,9 @@ export const CurrenciesModal = () => {
         />
 
         <FlatList
-          ListHeaderComponent={() => <Text className="text-white">All</Text>}
+          ListHeaderComponent={() => (
+            <Text className="text-secondary-text">All</Text>
+          )}
           data={all}
           scrollEnabled={false}
           contentContainerStyle={{ gap: 2 }}

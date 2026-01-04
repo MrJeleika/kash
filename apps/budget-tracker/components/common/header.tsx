@@ -25,7 +25,7 @@ export const Header = ({
   return (
     <View
       className={cn(
-        'absolute left-0 z-40 flex w-full items-center mb-5 flex-row justify-between',
+        'absolute left-0 right-0 z-40 flex w-screen border  items-center mb-5 flex-row justify-between',
         isModal ? 'top-0' : 'top-8'
       )}
     >
@@ -50,7 +50,7 @@ export const Header = ({
         )}
       </View>
       <View>
-        {title && <Text className="font-medium text-white">{title}</Text>}
+        {title && <Text className="font-semibold text-white">{title}</Text>}
         {centerElement && <View>{centerElement}</View>}
       </View>
       <View className="w-[40px]">{actionButton}</View>

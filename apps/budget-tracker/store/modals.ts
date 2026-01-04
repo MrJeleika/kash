@@ -1,3 +1,4 @@
+import { Category } from '@/types/categories';
 import { Transaction } from '@/types/transactions';
 import { create } from 'zustand';
 
@@ -15,6 +16,14 @@ interface ModalsState {
 
   periodSelectorModalOpen: boolean;
   setPeriodSelectorModalOpen: (open: boolean) => void;
+
+  categoriesModalOpen: boolean;
+  setCategoriesModalOpen: (open: boolean) => void;
+
+  categoryToEdit: Category | null;
+  setCategoryToEdit: (category: Category | null) => void;
+  addCategoryModalOpen: boolean;
+  setAddCategoryModalOpen: (open: boolean) => void;
 }
 
 export const useModalsStore = create<ModalsState>((set) => ({
@@ -33,4 +42,13 @@ export const useModalsStore = create<ModalsState>((set) => ({
 
   periodSelectorModalOpen: false,
   setPeriodSelectorModalOpen: (open) => set({ periodSelectorModalOpen: open }),
+
+  categoriesModalOpen: false,
+  setCategoriesModalOpen: (open) => set({ categoriesModalOpen: open }),
+
+  addCategoryModalOpen: false,
+  setAddCategoryModalOpen: (open) => set({ addCategoryModalOpen: open }),
+
+  categoryToEdit: null,
+  setCategoryToEdit: (category) => set({ categoryToEdit: category }),
 }));

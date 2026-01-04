@@ -18,6 +18,7 @@ const buttonVariants = cva(
       },
       size: {
         default: '',
+        cta: 'w-full p-4 rounded-xl',
       },
     },
     defaultVariants: {
@@ -27,8 +28,21 @@ const buttonVariants = cva(
   }
 );
 
+const textVariants = cva('text-white', {
+  variants: {
+    text: {
+      default: '',
+      cta: 'text-black font-medium',
+    },
+  },
+  defaultVariants: {
+    text: 'default',
+  },
+});
+
 type ButtonProps = TouchableOpacityProps &
-  VariantProps<typeof buttonVariants> & {
+  VariantProps<typeof buttonVariants> &
+  VariantProps<typeof textVariants> & {
     className?: string;
     children: React.ReactNode;
   };
@@ -38,6 +52,7 @@ function Button({
   variant = 'default',
   size = 'default',
   children,
+  text = 'default',
   ...props
 }: ButtonProps) {
   return (
@@ -45,7 +60,7 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      <Text>{children}</Text>
+      <Text className={cn(textVariants({ text }))}>{children}</Text>
     </Pressable>
   );
 }

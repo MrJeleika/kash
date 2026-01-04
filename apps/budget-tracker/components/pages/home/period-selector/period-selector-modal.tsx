@@ -1,13 +1,15 @@
 import { Header } from '@/components/common/header';
 import { ModalBase, ModalBaseRef } from '@/components/common/modal-base';
 import { useModalsStore } from '@/store/modals';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { getPeriodConfigs } from './config';
 import { Button } from '@/components/ui/button/button';
 import { PeriodConfig } from '@/types/periods';
 import { useTransactionsStore } from '@/store/transactions';
 import { cn } from '@MrJeleika/utils';
+import { Calendar } from '@/components/ui/calendar/calendar';
+import { DateData } from 'react-native-calendars';
 
 export const PeriodSelectorModal = () => {
   const modalRef = useRef<ModalBaseRef>(null);
@@ -23,6 +25,7 @@ export const PeriodSelectorModal = () => {
     handleClose();
     setPeriod(period);
   };
+  const [selected, setSelected] = useState('');
 
   return (
     <ModalBase
@@ -31,27 +34,38 @@ export const PeriodSelectorModal = () => {
       onClose={() => setPeriodSelectorModalOpen(false)}
     >
       <Header title="Select period" closeButtonAction={handleClose} />
-      <View className="flex flex-row flex-wrap gap-2 pt-28">
-        {getPeriodConfigs().map((period) => (
-          <Button
-            key={period.label}
-            onPress={() => handlePeriodSelect(period)}
-            variant={
-              period.label === currentPeriod.label ? 'default' : 'secondary'
-            }
-            className="rounded-xl px-4 py-3"
-          >
-            <Text
-              className={cn(
-                period.label === currentPeriod.label
-                  ? 'text-black'
-                  : 'text-white'
-              )}
+      <View className="pt-28 flex flex-col gap-4">
+        <View className="flex flex-row flex-wrap gap-2 ">
+          {getPeriodConfigs().map((period) => (
+            <Button
+              key={period.label}
+              onPress={() => handlePeriodSelect(period)}
+              variant={
+                period.label === currentPeriod.label ? 'default' : 'secondary'
+              }
+              className="rounded-xl px-4 py-3"
             >
-              {period.label}
-            </Text>
-          </Button>
-        ))}
+              <Text
+                className={cn(
+                  period.label === currentPeriod.label
+                    ? 'text-black'
+                    : 'text-white'
+                )}
+              >
+                {period.label}
+              </Text>
+            </Button>
+          ))}
+        </View>
+        {/* <Calendar
+          onDayPress={(date) => setSelected(date.dateString)}
+          markedDates={{
+            [selected]: {
+              selected: true,
+            },
+          }}
+          className="rounded-xl bg-dark-gray"
+        /> */}
       </View>
     </ModalBase>
   );

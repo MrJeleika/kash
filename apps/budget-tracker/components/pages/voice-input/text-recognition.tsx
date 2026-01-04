@@ -1,3 +1,4 @@
+import { useTranscribeToTransactions } from '@/hooks/voice/useTranscribeToTransactions';
 import { useEffect, useState } from 'react';
 import { Text, View, Button, TouchableOpacity } from 'react-native';
 
@@ -26,6 +27,9 @@ const MOCK_TRANSCRIPTS = [
 ];
 
 export const TextRecognition = ({ voiceInputOpen }: Props) => {
+  const { mutateAsync: transcribeToTransactions } =
+    useTranscribeToTransactions();
+
   const [transcript, setTranscript] = useState('');
   const [isRecognizing, setIsRecognizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +52,9 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
           setTranscript(currentText);
         }, i * 50);
       }
+
+      const transactions = await transcribeToTransactions(mockTranscript);
+      console.log('transactions', transactions);
 
       setTimeout(() => {
         setIsRecognizing(false);
@@ -105,31 +112,18 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
   }, [voiceInputOpen]);
 
   return (
-    <View className="absolute bg-black rounded-xl min-h-[100px] bottom-28 left-4 right-4 p-4">
-      {isMockMode && (
-        <Text className="text-yellow-400 text-xs mb-2">
-          🎤 Mock Mode (Build app to use real speech recognition)
-        </Text>
-      )}
-
+    <View className="absolute flex flex-col items-center justify-center bg-black rounded-xl min-h-[100px] bottom-28 left-4 right-4 p-4">
       {error && (
         <Text className="text-red-400 text-sm mb-2">Error: {error}</Text>
       )}
 
       {isRecognizing && !transcript && (
-        <Text className="text-gray-400 italic">Listening...</Text>
+        <Text className="text-secondary-text italic">Listening...</Text>
       )}
 
-      <Text className="text-white text-lg">{transcript}</Text>
-
-      {isMockMode && !isRecognizing && (
-        <TouchableOpacity
-          onPress={handleStart}
-          className="mt-3 bg-blue-500 rounded-lg py-2 px-4 self-start"
-        >
-          <Text className="text-white font-semibold">Try Mock Recognition</Text>
-        </TouchableOpacity>
-      )}
+      <Text className="text-secondary-text flex items-center justify-center text-center">
+        {transcript}
+      </Text>
     </View>
   );
 };

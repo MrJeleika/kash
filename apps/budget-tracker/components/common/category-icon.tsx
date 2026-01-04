@@ -9,20 +9,21 @@ interface CategoryIconProps {
   category: Category;
   className?: string;
   style?: StyleProp<ViewStyle> | AnimatedStyle<ViewStyle>;
+  size?: number;
 }
 
 export const CategoryIcon = React.forwardRef<
   React.ComponentRef<typeof Animated.View>,
   CategoryIconProps
->(({ category, className, style }, ref) => {
+>(({ category, className, style, size = 40 }, ref) => {
   return (
     <Animated.View
       ref={ref}
       style={[
         {
           backgroundColor: reduceColorSaturation(category.color),
-          width: 40,
-          height: 40,
+          width: size,
+          height: size,
           borderRadius: 6,
           justifyContent: 'center',
           alignItems: 'center',
@@ -30,7 +31,7 @@ export const CategoryIcon = React.forwardRef<
         style,
       ]}
     >
-      <Icon icon={category.icon} size={24} color={category.color} />
+      <Icon icon={category.icon} size={size * 0.6} color={category.color} />
     </Animated.View>
   );
 });

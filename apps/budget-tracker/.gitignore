@@ -43,3 +43,7 @@ app-example
 /ios
 /android
 .pnpm-store/
+.env
+.env.local
+.env.staging
+.env.production

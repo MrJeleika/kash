@@ -33,9 +33,7 @@ export const VoiceInput = () => {
 
   return (
     <Animated.View
-      className={cn(
-        'h-screen w-screen absolute inset-0 z-10 pointer-events-none'
-      )}
+      className={cn('h-screen w-screen absolute inset-0 z-10')}
       style={animatedStyle}
     >
       <BlurView

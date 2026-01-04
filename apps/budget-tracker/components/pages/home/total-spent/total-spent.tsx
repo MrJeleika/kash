@@ -1,13 +1,16 @@
 import { useCurrencyStore } from '@/store/currency';
-import { useTransactionsStore } from '@/store/transactions';
 import { formatNumberWithSpaces } from '@MrJeleika/utils';
 import { Text, View } from 'react-native';
 import { PeriodSelectorTrigger } from '../period-selector/period-selector-trigger';
+import { GroupedTransaction } from '@/utils/transactions';
 
-export const TotalSpent = () => {
-  const { transactions } = useTransactionsStore();
-  const totalSpent = transactions.reduce(
-    (acc, transaction) => acc + transaction.amountInBaseCurrency,
+interface Props {
+  groupedTransactions: GroupedTransaction[];
+}
+
+export const TotalSpent = ({ groupedTransactions }: Props) => {
+  const totalSpent = groupedTransactions.reduce(
+    (acc, group) => acc + group.total,
     0
   );
   const { currency: defaultCurrency } = useCurrencyStore();

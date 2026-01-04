@@ -7,7 +7,6 @@ import { useModalsStore } from '@/store/modals';
 import { useSettingsStore } from '@/store/settings';
 import { useCurrencyStore } from '@/store/currency';
 import {
-  Crown,
   LayoutGrid,
   Sun,
   Mic,
@@ -20,10 +19,10 @@ import {
   FileText,
   Trash2,
 } from 'lucide-react-native';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 export default function SettingsScreen() {
-  const { setCurrenciesModalOpen } = useModalsStore();
+  const { setCurrenciesModalOpen, setCategoriesModalOpen } = useModalsStore();
   const {
     alwaysShowIncomes,
     roundTotals,
@@ -64,8 +63,7 @@ export default function SettingsScreen() {
   };
 
   const handleCategoriesPress = () => {
-    // TODO: Navigate to categories screen
-    console.log('Categories');
+    setCategoriesModalOpen(true);
   };
 
   const handleVoiceLanguagePress = () => {
@@ -76,7 +74,7 @@ export default function SettingsScreen() {
   return (
     <SafeInsert className="relative h-full bg-black">
       <Header title="Settings" backButton />
-      <ScrollView className="pt-20 px-4" showsVerticalScrollIndicator={false}>
+      <ScrollView className="pt-28" showsVerticalScrollIndicator={false}>
         <SettingsSection>
           <SettingsItem
             icon={LayoutGrid}
