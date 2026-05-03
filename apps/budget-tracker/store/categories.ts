@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Category } from '@/types/categories';
 import { TransactionType } from '@/types/transactions';
 import { CATEGORIES } from '@/constants/categories';
-import { generateUuid } from '@MrJeleika/utils';
+import { generateUuid } from '@/utils/shared';
 
 interface CategoryStore {
   categories: Category[];

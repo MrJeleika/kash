@@ -9,7 +9,7 @@ import { ModalBase, ModalBaseRef } from '@/components/common/modal-base';
 import { CloseButton } from '@/components/common/close-button';
 import { SelectTransactionType } from '@/components/common/select-transaction-type';
 import { Keyboard } from '@/components/ui/keyboard/keyboard';
-import { AnimatedText, cn } from '@MrJeleika/utils';
+import { AnimatedText, cn } from '@/utils/shared';
 import SelectCategory from './category/select-category';
 import { DateSelector } from './date-selector';
 import { CurrencyBadge } from './currency-badge';

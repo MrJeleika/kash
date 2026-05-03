@@ -1,6 +1,6 @@
 import { useCategoriesStore } from '@/store/categories';
 import { useTransactionsStore } from '@/store/transactions';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { CategoryIcon } from '@/components/common/category-icon';

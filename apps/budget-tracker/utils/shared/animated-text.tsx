@@ -5,9 +5,9 @@ import Animated, {
   FadeOutDown,
   Layout,
 } from 'react-native-reanimated';
-import { TEXT_ANIMATION_CONFIG } from './animations.utils';
-import { formatNumberWithSpaces } from './text.utils';
-import { cn } from './utils';
+import { TEXT_ANIMATION_CONFIG } from './animations-utils';
+import { formatNumberWithSpaces } from './text-utils';
+import { cn } from './cn';
 
 interface AnimatedTextProps extends Omit<TextProps, 'children'> {
   children: string;

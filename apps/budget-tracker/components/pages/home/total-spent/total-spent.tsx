@@ -1,5 +1,5 @@
 import { useCurrencyStore } from '@/store/currency';
-import { formatNumberWithSpaces } from '@MrJeleika/utils';
+import { formatNumberWithSpaces } from '@/utils/shared';
 import { Text, View } from 'react-native';
 import { PeriodSelectorTrigger } from '../period-selector/period-selector-trigger';
 import { GroupedTransaction } from '@/utils/transactions';

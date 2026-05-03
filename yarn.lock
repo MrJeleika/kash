@@ -17,15 +17,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@MrJeleika/utils@workspace:*, @MrJeleika/utils@workspace:packages/utils":
-  version: 0.0.0-use.local
-  resolution: "@MrJeleika/utils@workspace:packages/utils"
-  dependencies:
-    clsx: "npm:^2.1.1"
-    tailwind-merge: "npm:^2.5.4"
-  languageName: unknown
-  linkType: soft
-
 "@alloc/quick-lru@npm:^5.2.0":
   version: 5.2.0
   resolution: "@alloc/quick-lru@npm:5.2.0"
@@ -5672,7 +5663,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "budget-tracker@workspace:apps/budget-tracker"
   dependencies:
-    "@MrJeleika/utils": "workspace:*"
     "@expo/vector-icons": "npm:^15.0.3"
     "@gorhom/bottom-sheet": "npm:^5.2.8"
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
@@ -5708,7 +5698,7 @@ __metadata:
     expo-web-browser: "npm:~15.0.10"
     expo-yarn-workspaces: "npm:^2.3.2"
     lucide-react-native: "npm:^0.562.0"
-    nativewind: "npm:^4.1.19"
+    nativewind: "npm:4.2.3"
     react: "npm:19.1.0"
     react-dom: "npm:19.1.0"
     react-native: "npm:0.81.5"
@@ -5724,6 +5714,7 @@ __metadata:
     react-native-svg: "npm:15.12.1"
     react-native-web: "npm:~0.21.0"
     react-native-worklets: "npm:0.5.1"
+    tailwind-merge: "npm:^3.5.0"
     tailwindcss: "npm:^3.4.1"
     typescript: "npm:~5.9.2"
     zustand: "npm:^5.0.9"
@@ -12959,7 +12950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nativewind@npm:^4.1.19":
+"nativewind@npm:4.2.3":
   version: 4.2.3
   resolution: "nativewind@npm:4.2.3"
   dependencies:
@@ -17043,10 +17034,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^2.5.4":
-  version: 2.6.1
-  resolution: "tailwind-merge@npm:2.6.1"
-  checksum: 10c0/f9b5d7ba37f6c6dc7bb7a090f08252e8d827b5abfc1031bf468c5274ce104409e7952a0075a3e009aab53adda8c6d133bc1dd9d3427e2ae5bc00306f9ce1fbff
+"tailwind-merge@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "tailwind-merge@npm:3.5.0"
+  checksum: 10c0/4dc588f5b5296ba3f38e1ebb41f02b6d24a8c5bb45e44b33748c118fb4b5767dd0efc464431ca3e75404056b618b5f67bec3708158baa65fed8a2fc9201e0c53
   languageName: node
   linkType: hard
 

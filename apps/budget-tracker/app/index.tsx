@@ -15,7 +15,12 @@ const redirectTo = makeRedirectUri({
 });
 
 function looksLikeOAuthReturn(url: string) {
-  return /[?&#](code|error)=/.test(url);
+  return /[?&#](code|error|access_token)=/.test(url);
+}
+
+function parseFragment(url: string): URLSearchParams {
+  const hash = url.split('#')[1] ?? '';
+  return new URLSearchParams(hash);
 }
 
 export default function AuthScreen() {
@@ -25,20 +30,62 @@ export default function AuthScreen() {
 
   const finalizeOAuthReturn = useCallback(
     async (url: string | null | undefined) => {
-      if (!url || !looksLikeOAuthReturn(url)) return;
-      if (oauthHandledRef.current) return;
+      console.log('[oauth] finalizeOAuthReturn url=', url);
+      if (!url || !looksLikeOAuthReturn(url)) {
+        console.log('[oauth] skipping — not an oauth return');
+        return;
+      }
+      if (oauthHandledRef.current) {
+        console.log('[oauth] skipping — already handled');
+        return;
+      }
       oauthHandledRef.current = true;
 
       WebBrowser.dismissBrowser();
-      const { error: exchangeError } =
-        await supabase.auth.exchangeCodeForSession(url);
-      if (exchangeError) {
-        oauthHandledRef.current = false;
-        setError(exchangeError.message);
+
+      const code = new URL(url).searchParams.get('code');
+      if (code) {
+        console.log('[oauth] exchanging code for session…');
+        const { data, error: exchangeError } =
+          await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) {
+          console.log('[oauth] exchange failed:', exchangeError.message);
+          oauthHandledRef.current = false;
+          setError(exchangeError.message);
+          setLoading(false);
+          return;
+        }
+        console.log('[oauth] session ok, user=', data.session?.user?.id);
         setLoading(false);
+        router.replace('/home');
         return;
       }
-      router.replace('/home');
+
+      const fragment = parseFragment(url);
+      const accessToken = fragment.get('access_token');
+      const refreshToken = fragment.get('refresh_token');
+      if (accessToken && refreshToken) {
+        console.log('[oauth] setting session from implicit-flow tokens…');
+        const { data, error: setErr } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+        if (setErr) {
+          console.log('[oauth] setSession failed:', setErr.message);
+          oauthHandledRef.current = false;
+          setError(setErr.message);
+          setLoading(false);
+          return;
+        }
+        console.log('[oauth] session ok, user=', data.session?.user?.id);
+        setLoading(false);
+        router.replace('/home');
+        return;
+      }
+
+      oauthHandledRef.current = false;
+      setError('OAuth response missing tokens');
+      setLoading(false);
     },
     []
   );
@@ -69,10 +116,15 @@ export default function AuthScreen() {
       if (oauthError) throw oauthError;
       if (!data?.url) throw new Error('No OAuth URL returned');
 
+      console.log('[oauth] redirectTo=', redirectTo);
+      console.log('[oauth] auth url=', data.url);
+
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
         redirectTo
       );
+
+      console.log('[oauth] WebBrowser result:', JSON.stringify(result));
 
       if (result.type !== 'success') {
         setLoading(false);

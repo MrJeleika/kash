@@ -1,4 +1,4 @@
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { LucideIcon } from 'lucide-react-native';
 import { Pressable, Text, View } from 'react-native';
 import { Icon } from '@/components/ui/icon';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Pressable, Text, TouchableOpacityProps } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 
 const buttonVariants = cva(
   'flex-row items-center justify-center rounded-lg disabled:opacity-50 active:opacity-70',

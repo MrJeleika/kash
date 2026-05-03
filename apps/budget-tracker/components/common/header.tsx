@@ -1,13 +1,12 @@
-import { Text, View } from 'react-native';
-import { Button } from '../ui/button/button';
+import { Pressable, Text, View } from 'react-native';
 import { Icon } from '../ui/icon';
 import { ChevronLeft, X } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { cn } from '@MrJeleika/utils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface HeaderProps {
   backButton?: boolean;
-  closeButtonAction?: () => void; // If provided, a close button will be shown in the top left
+  closeButtonAction?: () => void;
   title?: string;
   centerElement?: React.ReactNode;
   actionButton?: React.ReactNode;
@@ -22,38 +21,60 @@ export const Header = ({
   actionButton,
   isModal = false,
 }: HeaderProps) => {
+  const insets = useSafeAreaInsets();
+  const topPad = isModal ? 12 : insets.top + 4;
+
   return (
     <View
-      className={cn(
-        'absolute left-0 right-0 z-40 flex w-screen border  items-center mb-5 flex-row justify-between',
-        isModal ? 'top-0' : 'top-8'
-      )}
+      style={{
+        paddingTop: topPad,
+        paddingBottom: 12,
+        paddingHorizontal: 12,
+        backgroundColor: '#C2B9A7',
+        borderBottomWidth: 1,
+        borderBottomColor: '#B5ADA0',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
     >
-      <View className="w-[40px]">
+      <View style={{ minWidth: 80, alignItems: 'flex-start' }}>
         {backButton && (
-          <Button
-            variant={'secondary'}
-            className="rounded-full p-2 items-center justify-center"
+          <Pressable
+            className="flex flex-row items-center"
             onPress={() => router.back()}
+            hitSlop={8}
           >
-            <Icon icon={ChevronLeft} className="text-text" />
-          </Button>
+            <Icon icon={ChevronLeft} size={22} color="#1A1918" />
+            <Text>Back</Text>
+          </Pressable>
         )}
         {closeButtonAction && (
-          <Button
-            variant={'secondary'}
-            className="rounded-full p-2"
+          <Pressable
             onPress={closeButtonAction}
+            hitSlop={8}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.5 : 1,
+              padding: 4,
+            })}
           >
-            <Icon icon={X} className="text-text" />
-          </Button>
+            <Icon icon={X} size={22} color="#1A1918" />
+          </Pressable>
         )}
       </View>
-      <View>
-        {title && <Text className="font-semibold text-text">{title}</Text>}
-        {centerElement && <View>{centerElement}</View>}
+
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        {title && (
+          <Text style={{ color: '#1A1918', fontSize: 17, fontWeight: '600' }}>
+            {title}
+          </Text>
+        )}
+        {centerElement}
       </View>
-      <View className="w-[40px]">{actionButton}</View>
+
+      <View style={{ minWidth: 80, alignItems: 'flex-end' }}>
+        {actionButton}
+      </View>
     </View>
   );
 };

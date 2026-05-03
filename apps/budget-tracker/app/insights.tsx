@@ -4,7 +4,7 @@ import { DailyTrend } from '@/components/pages/insights/daily-trend';
 import { PeriodSelectorTrigger } from '@/components/pages/home/period-selector/period-selector-trigger';
 import { useInsights } from '@/hooks/insights/useInsights';
 import { useCurrencyStore } from '@/store/currency';
-import { formatNumberWithSpaces } from '@MrJeleika/utils';
+import { formatNumberWithSpaces } from '@/utils/shared';
 import { ScrollView, Text, View } from 'react-native';
 
 export default function InsightsScreen() {
@@ -23,7 +23,7 @@ export default function InsightsScreen() {
 
       <ScrollView
         className="px-4"
-        contentContainerStyle={{ paddingTop: 96, paddingBottom: 48, gap: 24 }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: 48, gap: 24 }}
       >
         {/* Period */}
         <View className="items-center">

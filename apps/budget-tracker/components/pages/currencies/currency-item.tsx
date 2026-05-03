@@ -1,5 +1,5 @@
 import { Icon } from '@/components/ui/icon';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { Heart } from 'lucide-react-native';
 import { memo } from 'react';
 import { Pressable, Text } from 'react-native';

@@ -7,7 +7,7 @@ import {
   groupTransactionsByDate,
   searchTransactions,
 } from '@/utils/transactions';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
@@ -42,7 +42,7 @@ export default function HistoryScreen() {
       />
 
       <ScrollView
-        contentContainerStyle={{ paddingTop: 96, paddingBottom: 48 }}
+        contentContainerStyle={{ paddingTop: 16, paddingBottom: 48 }}
         className="px-4"
       >
         <Input

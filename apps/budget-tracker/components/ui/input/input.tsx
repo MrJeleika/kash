@@ -1,4 +1,4 @@
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { Platform, TextInput, TextInputProps, View } from 'react-native';
 
 interface InputProps extends TextInputProps {

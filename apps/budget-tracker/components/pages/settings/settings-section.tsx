@@ -1,4 +1,4 @@
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { View } from 'react-native';
 
 interface SettingsSectionProps {

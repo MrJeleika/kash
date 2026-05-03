@@ -1,6 +1,6 @@
 import { X } from 'lucide-react-native';
 import { Button } from '../ui/button/button';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { Icon } from '../ui/icon';
 
 interface CloseButtonProps {

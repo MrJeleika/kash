@@ -6,7 +6,7 @@ import { Icon } from '@/components/ui/icon';
 import { useTransactions } from '@/hooks/transactions/useTransactions';
 import { useCurrencyStore } from '@/store/currency';
 import { filterGroupsByCategory, totalExpense } from '@/utils/transactions';
-import { formatNumberWithSpaces } from '@MrJeleika/utils';
+import { formatNumberWithSpaces } from '@/utils/shared';
 import { router } from 'expo-router';
 import { BarChart3, Settings, Bell } from 'lucide-react-native';
 import { useMemo, useState } from 'react';

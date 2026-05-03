@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 import Animated, {
@@ -75,16 +75,16 @@ export const SelectTransactionType = ({
         <Pressable
           style={{
             backgroundColor:
-              type === 'income' ? reduceColorSaturation('green') : undefined,
+              type === 'income' ? reduceColorSaturation('#3A7D44') : undefined,
           }}
           className={cn(
             'p-2 rounded-full flex flex-row items-center gap-1 overflow-hidden'
           )}
           onPress={() => setType('income')}
         >
-          <Icon icon={ArrowDownLeft} className="text-green size-[18px]" />
+          <Icon icon={ArrowDownLeft} className="text-[#3A7D44] size-[18px]" />
           {type === 'income' && (
-            <Animated.Text className="text-green" numberOfLines={1}>
+            <Animated.Text className="text-[#3A7D44]" numberOfLines={1}>
               Income
             </Animated.Text>
           )}
@@ -94,16 +94,16 @@ export const SelectTransactionType = ({
         <Pressable
           style={{
             backgroundColor:
-              type === 'expense' ? reduceColorSaturation('orange') : undefined,
+              type === 'expense' ? reduceColorSaturation('#E07820') : undefined,
           }}
           className={cn(
             'p-2 rounded-full flex flex-row items-center gap-1 overflow-hidden'
           )}
           onPress={() => setType('expense')}
         >
-          <Icon icon={ArrowUpRight} className="text-orange size-[18px]" />
+          <Icon icon={ArrowUpRight} className="text-[#E07820] size-[18px]" />
           {type === 'expense' && (
-            <Animated.Text className="text-orange" numberOfLines={1}>
+            <Animated.Text className="text-[#E07820]" numberOfLines={1}>
               Expense
             </Animated.Text>
           )}

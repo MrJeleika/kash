@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Transaction } from '@/types/transactions';
-import { generateUuid } from '@MrJeleika/utils';
+import { generateUuid } from '@/utils/shared';
 import { PeriodConfig } from '@/types/periods';
 
 type NewTransaction = Omit<Transaction, 'id' | 'updatedAt' | 'syncedAt' | 'deletedAt'>;

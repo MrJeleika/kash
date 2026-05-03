@@ -2,7 +2,7 @@ import { useCategoriesStore } from '@/store/categories';
 import { useModalsStore } from '@/store/modals';
 import { Transaction } from '@/types/transactions';
 import { formatTime } from '@/utils/format/dates';
-import { formatNumberWithSpaces } from '@MrJeleika/utils';
+import { formatNumberWithSpaces } from '@/utils/shared';
 import { Text, View } from 'react-native';
 import Animated, {
   FadeInUp,

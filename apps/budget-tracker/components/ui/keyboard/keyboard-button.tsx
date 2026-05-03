@@ -1,6 +1,6 @@
 import { Text } from 'react-native';
 import { Button } from '../button/button';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 
 export interface KeyboardButtonProps {
   onClick: () => void;

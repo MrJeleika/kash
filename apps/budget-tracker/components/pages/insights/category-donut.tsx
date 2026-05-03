@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 import Svg, { Circle, G } from 'react-native-svg';
 import type { CategoryBreakdown } from '@/hooks/insights/useInsights';
-import { formatNumberWithSpaces } from '@MrJeleika/utils';
+import { formatNumberWithSpaces } from '@/utils/shared';
 
 interface Props {
   data: CategoryBreakdown[];

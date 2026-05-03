@@ -1,11 +1,4 @@
-import { reduceSaturation, colors } from '@MrJeleika/utils';
-
-/**
- * Gets the color map from the central colors config
- */
-function getTailwindColorMap(): Record<string, string> {
-  return colors as Record<string, string>;
-}
+import { colors, reduceSaturation } from '@/utils/shared';
 
 /**
  * Reduces saturation of a color, supporting both hex colors and Tailwind color names
@@ -27,7 +20,6 @@ export function reduceColorSaturation(
   lightnessFactor?: number
 ): string {
   // Check if it's a Tailwind color name
-  const tailwindColors = getTailwindColorMap();
-  const hexColor = tailwindColors[color] || color;
+  const hexColor = colors[color as keyof typeof colors] || color;
   return reduceSaturation(hexColor, saturationFactor, lightnessFactor);
 }

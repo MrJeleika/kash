@@ -7,7 +7,7 @@ import { getPeriodConfigs } from '@/constants/periods';
 import { Button } from '@/components/ui/button/button';
 import { PeriodConfig } from '@/types/periods';
 import { useTransactionsStore } from '@/store/transactions';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { Calendar } from '@/components/ui/calendar/calendar';
 import { DateData } from 'react-native-calendars';
 

@@ -1,5 +1,5 @@
 import { useModalsStore } from '@/store/modals';
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { Text, View } from 'react-native';
 import Animated, {
   useSharedValue,

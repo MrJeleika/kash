@@ -45,15 +45,10 @@ export default function RootLayout() {
           <View style={{ flex: 1, backgroundColor: '#C2B9A7' }}>
             <Stack
               screenOptions={{
+                headerShown: false,
                 contentStyle: { backgroundColor: '#C2B9A7' },
               }}
-            >
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="home" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ headerShown: false }} />
-              <Stack.Screen name="settings" options={{ headerShown: false }} />
-            </Stack>
+            />
             <AuthGate />
             <AddTransactionModal />
             <CurrenciesModal />

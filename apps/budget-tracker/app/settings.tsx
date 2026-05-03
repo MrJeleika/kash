@@ -97,7 +97,7 @@ export default function SettingsScreen() {
   return (
     <SafeInsert className="relative h-full bg-background">
       <Header title="Settings" backButton />
-      <ScrollView className="pt-28" showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <SettingsSection>
           <SettingsItem
             icon={LayoutGrid}

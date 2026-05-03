@@ -1,4 +1,4 @@
-import { cn } from '@MrJeleika/utils';
+import { cn } from '@/utils/shared';
 import { useEffect, useImperativeHandle, forwardRef } from 'react';
 import { Dimensions, Platform, Pressable, View } from 'react-native';
 import {
@@ -98,13 +98,13 @@ export const ModalBase = forwardRef<ModalBaseRef, ModalBaseProps>(
       <GestureHandlerRootView className="absolute inset-0 z-[1000]">
         <Pressable onPress={handleClose} className="flex-1">
           <Animated.View
-            className="absolute inset-0 bg-background/50"
+            className="absolute inset-0 bg-[#c2b9a7]/50"
             style={rBackdropStyle}
           />
         </Pressable>
         <GestureDetector gesture={gesture}>
           <Animated.View
-            className="absolute w-full bg-background rounded-t-3xl"
+            className="absolute w-full bg-[#c2b9a7] rounded-t-3xl"
             style={[
               {
                 height: BOTTOM_SHEET_HEIGHT,
