@@ -70,7 +70,7 @@ export const SelectTransactionType = ({
   });
 
   return (
-    <View className="flex flex-row p-1 bg-dark-gray rounded-full overflow-hidden w-[150px]">
+    <View className="flex flex-row p-1 bg-surface rounded-full overflow-hidden w-[150px]">
       <Animated.View style={incomeButtonStyle}>
         <Pressable
           style={{

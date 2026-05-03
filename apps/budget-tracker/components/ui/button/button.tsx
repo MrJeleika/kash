@@ -10,9 +10,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary',
-        destructive: 'bg-destructive',
-        outline: 'border bg-background',
-        secondary: 'bg-gray',
+        accent: 'bg-accent',
+        destructive: 'bg-accent',
+        outline: 'border border-border bg-background',
+        secondary: 'bg-surface',
         ghost: 'bg-transparent',
         link: 'bg-transparent',
       },
@@ -28,31 +29,36 @@ const buttonVariants = cva(
   }
 );
 
-const textVariants = cva('text-white', {
+const textVariants = cva('font-medium', {
   variants: {
-    text: {
-      default: '',
-      cta: 'text-black font-medium',
+    variant: {
+      default: 'text-background',
+      accent: 'text-background',
+      destructive: 'text-background',
+      outline: 'text-text',
+      secondary: 'text-text',
+      ghost: 'text-text',
+      link: 'text-accent',
     },
   },
   defaultVariants: {
-    text: 'default',
+    variant: 'default',
   },
 });
 
 type ButtonProps = TouchableOpacityProps &
-  VariantProps<typeof buttonVariants> &
-  VariantProps<typeof textVariants> & {
+  VariantProps<typeof buttonVariants> & {
     className?: string;
+    textClassName?: string;
     children: React.ReactNode;
   };
 
 function Button({
   className,
+  textClassName,
   variant = 'default',
   size = 'default',
   children,
-  text = 'default',
   ...props
 }: ButtonProps) {
   return (
@@ -60,7 +66,13 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      <Text className={cn(textVariants({ text }))}>{children}</Text>
+      {typeof children === 'string' ? (
+        <Text className={cn(textVariants({ variant }), textClassName)}>
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
     </Pressable>
   );
 }

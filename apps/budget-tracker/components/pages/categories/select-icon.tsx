@@ -21,7 +21,7 @@ export const SelectIcon = ({ icon: selectedIcon, setIcon }: Props) => {
   };
 
   return (
-    <View className="w-full flex bg-dark-gray rounded-xl overflow-visible">
+    <View className="w-full flex bg-surface rounded-xl overflow-visible">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -36,7 +36,7 @@ export const SelectIcon = ({ icon: selectedIcon, setIcon }: Props) => {
                 className="gap-2 min-w-36"
               >
                 <View className="px-2">
-                  <Text className="text-secondary-text font-medium text-sm text-left">
+                  <Text className="text-text-muted font-medium text-sm text-left">
                     {categoryGroup.category}
                   </Text>
                 </View>

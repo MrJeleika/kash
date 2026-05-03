@@ -3,20 +3,31 @@
  * These colors are used in both Tailwind config and runtime utilities
  */
 const colors = {
-  primary: '#e5e5e5',
-  'light-gray': '#373737',
-  gray: '#262626',
-  'dark-gray': '#171717',
-  orange: '#FF8C00',
-  green: '#008000',
-  red: '#DC493A',
-  sky: '#4392F1',
-  'light-green': '#95C623',
-  purple: '#730071',
-  yellow: '#F9C22E',
-  blue: '#0A369D',
-  'secondary-text': '#a1a1a1',
-  danger: '#D91E36',
+  // Core palette — Digital Industrialism theme
+  background: '#C2B9A7',
+  surface: '#D6D1C4',
+  'surface-raised': '#DDD8CC',
+  border: '#B5ADA0',
+  text: '#1A1918',
+  'text-muted': '#7A7469',
+  accent: '#CC2200',
+  'accent-hover': '#AA1C00',
+
+  // Legacy / category colors kept for compatibility
+  primary: '#1A1918',
+  'light-gray': '#D6D1C4',
+  gray: '#C2B9A7',
+  'dark-gray': '#B5ADA0',
+  orange: '#E07820',
+  green: '#3A7D44',
+  red: '#CC2200',
+  sky: '#3A7DB0',
+  'light-green': '#6DA832',
+  purple: '#6B3FA0',
+  yellow: '#D4A017',
+  blue: '#2A5DA8',
+  'secondary-text': '#7A7469',
+  danger: '#CC2200',
 };
 
 module.exports = { colors };

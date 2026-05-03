@@ -6,12 +6,12 @@ import { View } from 'react-native';
 import { SelectTransactionType } from '@/components/common/select-transaction-type';
 import { Input } from '@/components/ui/input/input';
 import { SelectColor } from './select-color';
-import { CircleSlash, LucideIcon, Pencil } from 'lucide-react-native';
 import { CategoryIcon } from '@/components/common/category-icon';
 import { Button } from '@/components/ui/button/button';
 import { SelectIcon } from './select-icon';
 import { useCategoriesStore } from '@/store/categories';
 import { TransactionType } from '@/types/transactions';
+import { getIconByName, getIconName } from '@/utils/icon-registry';
 
 export const NewCategoryModal = () => {
   const modalRef = useRef<ModalBaseRef>(null);
@@ -22,13 +22,13 @@ export const NewCategoryModal = () => {
     categoryToEdit,
   } = useModalsStore();
 
-  const { addCategory } = useCategoriesStore();
+  const { addCategory, updateCategory } = useCategoriesStore();
 
   const [type, setType] = useState<TransactionType>(
     categoryToEdit?.type || 'expense'
   );
-  const [icon, setIcon] = useState<LucideIcon>(
-    categoryToEdit?.icon || CircleSlash
+  const [icon, setIcon] = useState<string>(
+    categoryToEdit?.icon || 'CircleSlash'
   );
   const [color, setColor] = useState<string>(
     categoryToEdit?.color || '#ffffff'
@@ -38,7 +38,7 @@ export const NewCategoryModal = () => {
   useEffect(() => {
     if (addCategoryModalOpen) {
       setType(categoryToEdit?.type || 'expense');
-      setIcon(categoryToEdit?.icon || CircleSlash);
+      setIcon(categoryToEdit?.icon || 'CircleSlash');
       setColor(categoryToEdit?.color || '#ffffff');
       setName(categoryToEdit?.name || '');
     }
@@ -50,7 +50,11 @@ export const NewCategoryModal = () => {
   };
 
   const handleSave = () => {
-    addCategory({ name, color, type, icon });
+    if (categoryToEdit) {
+      updateCategory(categoryToEdit.name, { name, color, type, icon });
+    } else {
+      addCategory({ name, color, type, icon });
+    }
     setAddCategoryModalOpen(false);
     setCategoryToEdit(null);
   };
@@ -82,15 +86,19 @@ export const NewCategoryModal = () => {
             value={name}
             onChangeText={setName}
             placeholder="Category name"
-            className="rounded-xl w-[65vw] py-5 text-lg leading-none !pl-16"
+            className="rounded-xl h-14 w-[65vw] text-lg !pl-16"
           />
           <SelectTransactionType type={type} setType={setType} />
         </View>
         <SelectColor color={color} setColor={setColor} />
-        <SelectIcon icon={icon} setIcon={setIcon} />
+        <SelectIcon
+          icon={getIconByName(icon)}
+          setIcon={(iconComponent) => {
+            setIcon(getIconName(iconComponent));
+          }}
+        />
         <Button
           size="cta"
-          text="cta"
           onPress={handleSave}
           disabled={!name || !color || !icon}
         >

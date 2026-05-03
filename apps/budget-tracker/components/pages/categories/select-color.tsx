@@ -12,7 +12,7 @@ interface Props {
 
 export const SelectColor = ({ color, setColor }: Props) => {
   return (
-    <View className="w-full flex bg-dark-gray rounded-xl overflow-visible">
+    <View className="w-full flex bg-surface rounded-xl overflow-visible">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

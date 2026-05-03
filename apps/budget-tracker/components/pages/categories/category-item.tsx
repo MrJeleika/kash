@@ -34,13 +34,14 @@ export const CategoryItem = ({ category, index }: Props) => {
   });
 
   const singleTap = Gesture.Tap()
-    .maxDuration(1000)
+    .maxDuration(500)
     .onStart(() => {
       scale.value = withTiming(0.95, { duration: 100 }, () => {
         scale.value = withTiming(1, { duration: 100 });
       });
       runOnJS(handlePress)();
     });
+
   return (
     <Animated.View
       entering={FadeInUp.duration(200).delay(index * 20)}
@@ -49,11 +50,11 @@ export const CategoryItem = ({ category, index }: Props) => {
       <GestureDetector gesture={singleTap}>
         <Animated.View
           style={animatedStyle}
-          className="flex flex-row items-center justify-between px-3 py-2 rounded-xl bg-dark-gray"
+          className="flex flex-row items-center justify-between px-3 py-2 rounded-xl bg-surface"
         >
           <View className="flex flex-row items-center gap-2">
             <CategoryIcon category={category} size={36} />
-            <Text className="text-white font-medium text-sm">
+            <Text className="text-text font-medium text-sm">
               {category.name}
             </Text>
           </View>

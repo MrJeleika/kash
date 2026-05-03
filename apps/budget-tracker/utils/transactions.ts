@@ -1,72 +1,98 @@
 import { Transaction } from '@/types/transactions';
+import { formatLongDate } from './format/dates';
 
 export interface GroupedTransaction {
-  date: string; // Formatted as "Monday, 29 Dec 2025"
+  /** Human-readable group label, e.g. "Monday, 29 Dec 2025". */
+  date: string;
   total: number;
   transactions: Transaction[];
 }
 
 /**
- * Groups transactions by date and calculates totals for each day
- * @param transactions - Array of transactions to group
- * @returns Array of grouped transactions sorted by date (newest first)
+ * Groups transactions by calendar day, totals each day, and sorts everything
+ * newest-first. Inner transactions within a day are also sorted newest-first.
  */
-export function groupTransactionsByDate(
+export const groupTransactionsByDate = (
   transactions: Transaction[]
-): GroupedTransaction[] {
-  // Group transactions by date (day level)
-  const groupedMap = new Map<string, Transaction[]>();
+): GroupedTransaction[] => {
+  const byDay = new Map<string, Transaction[]>();
+  for (const t of transactions) {
+    const dayKey = t.date.split('T')[0];
+    const bucket = byDay.get(dayKey);
+    if (bucket) bucket.push(t);
+    else byDay.set(dayKey, [t]);
+  }
 
-  transactions.forEach((transaction) => {
-    const dateKey = transaction.date.split('T')[0]; // Get YYYY-MM-DD format
-    if (!groupedMap.has(dateKey)) {
-      groupedMap.set(dateKey, []);
-    }
-    groupedMap.get(dateKey)!.push(transaction);
-  });
-
-  // Convert map to array and format
-  const grouped: GroupedTransaction[] = Array.from(groupedMap.entries()).map(
-    ([dateKey, transactionList]) => {
-      const date = new Date(dateKey);
-      const formattedDate = formatDate(date);
-      const total = transactionList.reduce(
-        (sum, transaction) => sum + transaction.amountInBaseCurrency,
-        0
+  const groups: GroupedTransaction[] = Array.from(byDay.entries()).map(
+    ([dayKey, items]) => {
+      const sorted = [...items].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-
-      // Sort transactions within the day (newest first, or by time if available)
-      const sortedTransactions = [...transactionList].sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateB.getTime() - dateA.getTime();
-      });
-
       return {
-        date: formattedDate,
-        total,
-        transactions: sortedTransactions,
+        date: formatLongDate(new Date(dayKey)),
+        total: sorted.reduce((s, t) => s + t.amountInBaseCurrency, 0),
+        transactions: sorted,
       };
     }
   );
 
-  // Sort groups by date (newest first)
-  return grouped.sort((a, b) => {
-    const dateA = new Date(a.transactions[0].date);
-    const dateB = new Date(b.transactions[0].date);
-    return dateB.getTime() - dateA.getTime();
-  });
-}
+  return groups.sort(
+    (a, b) =>
+      new Date(b.transactions[0].date).getTime() -
+      new Date(a.transactions[0].date).getTime()
+  );
+};
 
 /**
- * Formats a date as "Monday, 29 Dec 2025"
+ * Returns groups containing only transactions in the given category.
+ * Empty groups are dropped. Pass null to leave the input untouched.
  */
-function formatDate(date: Date): string {
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  };
-  return date.toLocaleDateString('en-US', options);
-}
+export const filterGroupsByCategory = (
+  groups: GroupedTransaction[],
+  categoryName: string | null
+): GroupedTransaction[] => {
+  if (!categoryName) return groups;
+  return groups
+    .map((g) => ({
+      ...g,
+      transactions: g.transactions.filter(
+        (t) => t.categoryName === categoryName
+      ),
+    }))
+    .filter((g) => g.transactions.length > 0);
+};
+
+/**
+ * Sums the absolute base-currency expense across visible groups.
+ */
+export const totalExpense = (groups: GroupedTransaction[]): number =>
+  groups
+    .flatMap((g) => g.transactions)
+    .filter((t) => t.type === 'expense')
+    .reduce((sum, t) => sum + Math.abs(t.amountInBaseCurrency), 0);
+
+/**
+ * Filters the raw transaction list by free-text query (matched against
+ * merchant + note + category) and an optional category name. Soft-deleted
+ * rows are excluded.
+ */
+export const searchTransactions = (
+  transactions: import('@/types/transactions').Transaction[],
+  options: { query?: string; category?: string | null }
+): import('@/types/transactions').Transaction[] => {
+  const q = options.query?.trim().toLowerCase() ?? '';
+  const cat = options.category ?? null;
+  return transactions.filter((t) => {
+    if (t.deletedAt) return false;
+    if (cat && t.categoryName !== cat) return false;
+    if (q) {
+      const hay = [
+        t.merchant?.toLowerCase() ?? '',
+        t.note?.toLowerCase() ?? '',
+        t.categoryName.toLowerCase(),
+      ].join(' ');
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+};

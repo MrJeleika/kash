@@ -18,10 +18,10 @@ export const CategoriesModal = () => {
     setAddCategoryModalOpen,
   } = useModalsStore();
 
-  const { getCategoriesByType } = useCategoriesStore();
+  const { categories } = useCategoriesStore();
 
   const [type, setType] = useState<'income' | 'expense'>('income');
-  const categories = getCategoriesByType(type);
+  const filteredCategories = categories.filter((cat) => cat.type === type);
 
   const handleClose = () => {
     modalRef.current?.close();
@@ -43,7 +43,7 @@ export const CategoriesModal = () => {
             onPress={() => setAddCategoryModalOpen(true)}
             className="rounded-full w-10 h-10 items-center justify-center"
           >
-            <Icon icon={Plus} className="text-white size-7" />
+            <Icon icon={Plus} className="text-text size-7" />
           </Button>
         }
       />
@@ -52,12 +52,12 @@ export const CategoriesModal = () => {
 
         <FlatList
           className="w-full"
-          data={categories}
+          data={filteredCategories}
           renderItem={({ item, index }) => (
             <CategoryItem category={item} index={index} />
           )}
           keyExtractor={(item) => item.name}
-          contentContainerClassName="gap-0.5"
+          contentContainerClassName="gap-0.5  pb-16"
         />
       </View>
     </ModalBase>

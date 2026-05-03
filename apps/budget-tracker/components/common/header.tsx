@@ -36,7 +36,7 @@ export const Header = ({
             className="rounded-full p-2 items-center justify-center"
             onPress={() => router.back()}
           >
-            <Icon icon={ChevronLeft} className="text-white" />
+            <Icon icon={ChevronLeft} className="text-text" />
           </Button>
         )}
         {closeButtonAction && (
@@ -45,12 +45,12 @@ export const Header = ({
             className="rounded-full p-2"
             onPress={closeButtonAction}
           >
-            <Icon icon={X} className="text-white" />
+            <Icon icon={X} className="text-text" />
           </Button>
         )}
       </View>
       <View>
-        {title && <Text className="font-semibold text-white">{title}</Text>}
+        {title && <Text className="font-semibold text-text">{title}</Text>}
         {centerElement && <View>{centerElement}</View>}
       </View>
       <View className="w-[40px]">{actionButton}</View>

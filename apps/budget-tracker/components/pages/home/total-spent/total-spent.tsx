@@ -17,10 +17,10 @@ export const TotalSpent = ({ groupedTransactions }: Props) => {
   return (
     <View className="flex flex-col gap-3 min-h-[12vh]">
       <View className="flex items-center justify-center flex-row gap-2">
-        <Text className="text-secondary-text text-sm">Expenses for </Text>
+        <Text className="text-text-muted text-sm">Expenses for </Text>
         <PeriodSelectorTrigger />
       </View>
-      <Text className="text-white text-4xl font-bold text-center">
+      <Text className="text-text text-4xl font-bold text-center">
         {formatNumberWithSpaces(totalSpent.toString())}{' '}
         {defaultCurrency?.toUpperCase()}
       </Text>

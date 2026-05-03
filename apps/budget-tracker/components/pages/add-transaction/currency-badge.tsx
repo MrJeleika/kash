@@ -21,13 +21,13 @@ export function CurrencyBadge({ currency, setCurrency }: CurrencyBadgeProps) {
   return (
     <Pressable
       onPress={handlePress}
-      className="bg-dark-gray rounded-2xl flex items-center justify-center px-2 min-w-[60px] overflow-hidden"
+      className="bg-surface rounded-2xl flex items-center justify-center px-2 min-w-[60px] overflow-hidden"
     >
       <Animated.Text
         key={currency}
         entering={FadeInUp.duration(200)}
         exiting={FadeOutDown.duration(150)}
-        className="text-white text-sm font-semibold"
+        className="text-text text-sm font-semibold"
       >
         {currency.toUpperCase()}
       </Animated.Text>

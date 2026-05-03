@@ -68,31 +68,31 @@ export const Calendar = (props: CalendarProps) => {
         <View className="flex-row items-center gap-2">
           <Pressable
             onPress={() => setIsYearPickerOpen(!isYearPickerOpen)}
-            className="flex-row items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-gray/50"
+            className="flex-row items-center gap-1 px-3 py-1.5 rounded-lg bg-surface/50"
           >
-            <Text className="text-white text-base font-medium">
+            <Text className="text-text text-base font-medium">
               {monthName} {year}
             </Text>
-            <Text className="text-white text-xs">▼</Text>
+            <Text className="text-text text-xs">▼</Text>
           </Pressable>
         </View>
 
         {isYearPickerOpen && (
-          <View className="absolute top-full left-0 right-0 z-50 mt-2 mx-4 bg-dark-gray rounded-xl border border-gray-700 max-h-48">
+          <View className="absolute top-full left-0 right-0 z-50 mt-2 mx-4 bg-surface rounded-xl border border-border max-h-48">
             <ScrollView className="max-h-48">
               {years.map((y) => (
                 <Pressable
                   key={y}
                   onPress={() => handleYearSelect(y)}
                   className={cn(
-                    'px-4 py-3 border-b border-gray-700/50',
-                    y === year && 'bg-white/10'
+                    'px-4 py-3 border-b border-border/50',
+                    y === year && 'bg-surface/10'
                   )}
                 >
                   <Text
                     className={cn(
                       'text-base',
-                      y === year ? 'text-white font-semibold' : 'text-gray-300'
+                      y === year ? 'text-text font-semibold' : 'text-text-muted'
                     )}
                   >
                     {y}

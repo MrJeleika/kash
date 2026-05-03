@@ -1,72 +1,208 @@
-import { Header } from '@/components/common/header';
-import { ActionButtons } from '@/components/pages/home/action-buttons';
-import { TotalSpent } from '@/components/pages/home/total-spent/total-spent';
-import { TransactionItem } from '@/components/pages/home/transactions/tranaction-item';
-import { VoiceInput } from '@/components/pages/voice-input/voice-input';
-import { Button } from '@/components/ui/button/button';
-import { Icon } from '@/components/ui/icon';
-import { ScrollViewWithFade } from '@/components/ui/scroll-view-with-fade';
-import { useTransactions } from '@/hooks/transactions/useTransactions';
-import { useCurrencyStore } from '@/store/currency';
-import { formatNumberWithSpaces } from '@MrJeleika/utils';
+import { supabase } from '@/lib/supabase';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+import { makeRedirectUri } from 'expo-auth-session';
 import { router } from 'expo-router';
-import { Settings } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-export default function HomeScreen() {
-  const groupedTransactions = useTransactions();
-  const { currency } = useCurrencyStore();
+WebBrowser.maybeCompleteAuthSession();
+
+/** Must match `scheme` in app.json and an entry in Supabase Auth → Redirect URLs */
+const redirectTo = makeRedirectUri({
+  scheme: 'kash',
+  path: 'auth/callback',
+});
+
+function looksLikeOAuthReturn(url: string) {
+  return /[?&#](code|error)=/.test(url);
+}
+
+export default function AuthScreen() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const oauthHandledRef = useRef(false);
+
+  const finalizeOAuthReturn = useCallback(
+    async (url: string | null | undefined) => {
+      if (!url || !looksLikeOAuthReturn(url)) return;
+      if (oauthHandledRef.current) return;
+      oauthHandledRef.current = true;
+
+      WebBrowser.dismissBrowser();
+      const { error: exchangeError } =
+        await supabase.auth.exchangeCodeForSession(url);
+      if (exchangeError) {
+        oauthHandledRef.current = false;
+        setError(exchangeError.message);
+        setLoading(false);
+        return;
+      }
+      router.replace('/home');
+    },
+    []
+  );
+
+  useEffect(() => {
+    const onUrl = ({ url }: { url: string }) => {
+      void finalizeOAuthReturn(url);
+    };
+
+    void Linking.getInitialURL().then((url) =>
+      finalizeOAuthReturn(url ?? undefined)
+    );
+
+    const subscription = Linking.addEventListener('url', onUrl);
+    return () => subscription.remove();
+  }, [finalizeOAuthReturn]);
+
+  const handleGoogleSignIn = async () => {
+    oauthHandledRef.current = false;
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo, skipBrowserRedirect: true },
+      });
+
+      if (oauthError) throw oauthError;
+      if (!data?.url) throw new Error('No OAuth URL returned');
+
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        redirectTo
+      );
+
+      if (result.type !== 'success') {
+        setLoading(false);
+        return;
+      }
+
+      await finalizeOAuthReturn(result.url);
+      setLoading(false);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Authentication failed';
+      setError(message);
+      setLoading(false);
+    }
+  };
+
   return (
-    <View className="relative h-full bg-black">
-      <Header
-        actionButton={
-          <Button
-            variant={'secondary'}
-            onPress={() => router.push('/settings')}
-            className="rounded-full p-2"
+    <View className="flex-1 bg-background px-6 py-12 justify-between">
+      {/* Header */}
+      <View className="gap-1">
+        <Text
+          className="text-text font-black tracking-tight"
+          style={{ fontSize: 52, lineHeight: 52 }}
+        >
+          KASH
+        </Text>
+        <Text className="text-text-muted text-xs tracking-widest uppercase">
+          Digital{'\n'}Industrialism /{'\n'}V2.0.4
+        </Text>
+      </View>
+
+      {/* Card */}
+      <View className="bg-surface border border-border rounded-sm p-6 gap-6">
+        {/* Status indicator */}
+        <View className="flex-row items-center gap-2">
+          <View className="w-3 h-3 bg-accent" />
+          <Text className="text-text-muted text-xs tracking-widest uppercase">
+            System Ready
+          </Text>
+        </View>
+
+        {/* Heading */}
+        <View className="gap-3">
+          <Text
+            className="text-text font-bold leading-tight"
+            style={{ fontSize: 28 }}
           >
-            <Icon icon={Settings} className="text-white" />
-          </Button>
-        }
-      />
-      <ScrollViewWithFade fadeLength={100} className="pt-28">
-        <TotalSpent groupedTransactions={groupedTransactions} />
-        {groupedTransactions.length > 0 && (
-          <View className="flex flex-col gap-4 mb-28">
-            {groupedTransactions.map((group) => (
-              <View key={group.date}>
-                <View className="flex flex-row items-center justify-between  px-1 ">
-                  <Text className="text-secondary-text text-sm">
-                    {group.date}
-                  </Text>
-                  <Text className="text-secondary-text text-sm">
-                    {formatNumberWithSpaces(group.total.toString())}{' '}
-                    {currency?.toUpperCase()}
-                  </Text>
-                </View>
-                <View className="flex flex-col gap-1">
-                  {group.transactions.map((transaction, index) => (
-                    <TransactionItem
-                      key={transaction.id}
-                      transaction={transaction}
-                      index={index}
-                    />
-                  ))}
-                </View>
-              </View>
-            ))}
-          </View>
+            Initialize secure authentication protocol...
+          </Text>
+          <View className="h-px bg-border" />
+        </View>
+
+        {/* Google button */}
+        <Pressable
+          onPress={handleGoogleSignIn}
+          disabled={loading}
+          className="bg-accent active:bg-accent-hover rounded-sm py-4 px-6 flex-row items-center justify-between"
+          style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}
+        >
+          <Text className="text-background font-semibold text-base">
+            Continue with Google
+          </Text>
+          {loading ? (
+            <ActivityIndicator color="#D6D1C4" size="small" />
+          ) : (
+            <Text className="text-background font-bold text-lg">→</Text>
+          )}
+        </Pressable>
+
+        {error && (
+          <Text className="text-accent text-xs text-center">{error}</Text>
         )}
-        {groupedTransactions.length === 0 && (
-          <View className="flex flex-col items-center justify-center h-[50vh]">
-            <Text className="text-secondary-text font-semibold">
-              No transactions for this period
-            </Text>
-          </View>
-        )}
-      </ScrollViewWithFade>
-      <ActionButtons />
-      <VoiceInput />
+
+        {/* Manual bypass section */}
+        <View className="gap-2">
+          <Text className="text-text-muted text-xs tracking-widest uppercase">
+            Manual Bypass
+          </Text>
+          <Text className="text-text text-sm">Corporate Identity Provider</Text>
+        </View>
+
+        {/* Technical footer */}
+        <View className="gap-1 pt-2 border-t border-border">
+          <Text className="text-text-muted" style={{ fontSize: 10 }}>
+            RSA-4096 / AES-256-GCM / SHARED
+          </Text>
+          <Text className="text-text-muted" style={{ fontSize: 10 }}>
+            LAT: 40.7128° N, LONG: 74.0060° W
+          </Text>
+        </View>
+      </View>
+
+      {/* Bottom status bar */}
+      <View className="flex-row items-center justify-between flex-wrap gap-1">
+        <View className="flex-row items-center gap-1">
+          <Text className="text-text-muted uppercase tracking-widest text-xs">
+            Status:{' '}
+          </Text>
+          <Text
+            className="text-accent font-bold uppercase tracking-widest"
+            style={{ fontSize: 10 }}
+          >
+            Encrypted
+          </Text>
+        </View>
+        <Text
+          className="text-text-muted uppercase tracking-widest"
+          style={{ fontSize: 10 }}
+        >
+          Version: <Text className="text-text font-bold">K_ALPHA_8</Text>
+        </Text>
+        <Text
+          className="text-text-muted uppercase tracking-widest"
+          style={{ fontSize: 10 }}
+        >
+          Access: <Text className="text-text font-bold">GLOBAL-1</Text>
+        </Text>
+      </View>
+
+      {/* Legal footer */}
+      <View className="flex-row gap-4 justify-center">
+        {['LEGAL', 'PRIVACY', 'SYSTEM LOG'].map((label) => (
+          <Text
+            key={label}
+            className="text-text-muted"
+            style={{ fontSize: 10 }}
+          >
+            {label}
+          </Text>
+        ))}
+      </View>
     </View>
   );
 }

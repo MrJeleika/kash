@@ -4,8 +4,6 @@ import {
   type ProcessedVoiceOutput,
 } from '../types/voice.js';
 
-import { env } from 'hono/adapter';
-
 export const processVoiceInput = async (
   transcript: string,
   categories: string[],

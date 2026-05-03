@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:budget": "cd apps/budget-tracker && pnpm start"
+    "app:start": "yarn workspace budget-tracker start",
+    "backend:start": "yarn workspace budget-backend dev",
+    "db:types": "supabase gen types typescript --linked > apps/budget-tracker/types/database.types.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.26.2"
+  "packageManager": "yarn@4.13.0"
 }

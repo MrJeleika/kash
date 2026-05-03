@@ -3,7 +3,7 @@ import { ModalBase, ModalBaseRef } from '@/components/common/modal-base';
 import { useModalsStore } from '@/store/modals';
 import { useRef, useState } from 'react';
 import { Text, View } from 'react-native';
-import { getPeriodConfigs } from './config';
+import { getPeriodConfigs } from '@/constants/periods';
 import { Button } from '@/components/ui/button/button';
 import { PeriodConfig } from '@/types/periods';
 import { useTransactionsStore } from '@/store/transactions';
@@ -48,8 +48,8 @@ export const PeriodSelectorModal = () => {
               <Text
                 className={cn(
                   period.label === currentPeriod.label
-                    ? 'text-black'
-                    : 'text-white'
+                    ? 'text-text'
+                    : 'text-text'
                 )}
               >
                 {period.label}
@@ -64,7 +64,7 @@ export const PeriodSelectorModal = () => {
               selected: true,
             },
           }}
-          className="rounded-xl bg-dark-gray"
+          className="rounded-xl bg-surface"
         /> */}
       </View>
     </ModalBase>

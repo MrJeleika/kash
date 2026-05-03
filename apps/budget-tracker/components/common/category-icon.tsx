@@ -4,6 +4,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 import { reduceColorSaturation } from '@/utils/colors';
 import React from 'react';
 import Animated, { AnimatedStyle } from 'react-native-reanimated';
+import { getIconByName } from '@/utils/icon-registry';
 
 interface CategoryIconProps {
   category: Category;
@@ -16,6 +17,8 @@ export const CategoryIcon = React.forwardRef<
   React.ComponentRef<typeof Animated.View>,
   CategoryIconProps
 >(({ category, className, style, size = 40 }, ref) => {
+  const iconComponent = getIconByName(category.icon);
+
   return (
     <Animated.View
       ref={ref}
@@ -31,7 +34,7 @@ export const CategoryIcon = React.forwardRef<
         style,
       ]}
     >
-      <Icon icon={category.icon} size={size * 0.6} color={category.color} />
+      <Icon icon={iconComponent} size={size * 0.6} color={category.color} />
     </Animated.View>
   );
 });

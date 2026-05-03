@@ -265,7 +265,7 @@ const SelectCategory = ({
 
   return (
     <View
-      className="rounded-xl pt-3 bg-dark-gray pb-3"
+      className="rounded-xl pt-3 bg-surface pb-3"
       style={{ overflow: 'hidden' }}
     >
       <View style={{ height: ITEM_SIZE * SELECTED_SCALE }}>

@@ -22,13 +22,13 @@ export const CurrencyItem = memo(
     onClick,
     onFavoriteClick,
   }: CurrencyItemProps) => {
-    const textColor = isSelected ? 'text-black' : 'text-white';
-    const iconFill = isFavorite ? (isSelected ? 'gray' : 'white') : undefined;
-    const iconColor = isSelected ? 'text-gray' : 'text-white';
+    const textColor = isSelected ? 'text-background' : 'text-text';
+    const iconFill = isFavorite ? (isSelected ? '#D6D1C4' : '#CC2200') : undefined;
+    const iconColor = isSelected ? 'text-background' : 'text-accent';
     const iconFillClass = isFavorite
       ? isSelected
-        ? 'fill-gray'
-        : 'fill-white'
+        ? 'fill-background'
+        : 'fill-accent'
       : '';
 
     return (
@@ -36,7 +36,7 @@ export const CurrencyItem = memo(
         onPress={onClick}
         className={cn(
           'flex items-center flex-row gap-3 px-3 py-2 rounded-xl',
-          isSelected ? 'bg-primary' : 'bg-gray'
+          isSelected ? 'bg-primary' : 'bg-surface'
         )}
         style={({ pressed }) => ({
           opacity: pressed ? 0.7 : 1,

@@ -2,8 +2,11 @@ import z from 'zod';
 
 // Define the schema for voice input validation
 export const voiceInputSchema = z.object({
-  transcript: z.string().min(1, 'Transcript cannot be empty'),
-  categories: z.array(z.string()).min(1, 'At least one category is required'),
+  transcript: z.string().min(1, 'Transcript cannot be empty').max(5000),
+  categories: z
+    .array(z.string())
+    .min(1, 'At least one category is required')
+    .max(100),
 });
 
 export type VoiceInput = z.infer<typeof voiceInputSchema>;

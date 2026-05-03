@@ -59,7 +59,7 @@ export const CurrenciesModal = () => {
       <ScrollViewWithFade enableFade className="pt-20">
         <FlatList
           ListHeaderComponent={() => (
-            <Text className="text-secondary-text">Favorites</Text>
+            <Text className="text-text-muted">Favorites</Text>
           )}
           data={favorites}
           style={{ marginBottom: 10 }}
@@ -85,7 +85,7 @@ export const CurrenciesModal = () => {
 
         <FlatList
           ListHeaderComponent={() => (
-            <Text className="text-secondary-text">All</Text>
+            <Text className="text-text-muted">All</Text>
           )}
           data={all}
           scrollEnabled={false}
@@ -110,7 +110,7 @@ export const CurrenciesModal = () => {
       </ScrollViewWithFade>
       <View className="absolute bottom-6 left-6 right-6">
         <Input
-          icon={<Icon icon={Search} className="text-white size-5" />}
+          icon={<Icon icon={Search} className="text-text size-5" />}
           placeholder="Search"
           value={search}
           onChangeText={setSearch}

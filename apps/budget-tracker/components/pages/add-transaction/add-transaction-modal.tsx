@@ -28,16 +28,18 @@ export function AddTransactionModal() {
     addTransactionOpen,
     setTransactionToEdit,
     transactionToEdit,
+    transactionDraft,
+    setTransactionDraft,
   } = useModalsStore();
+
+  const seed = transactionToEdit ?? transactionDraft;
 
   const { addTransaction, updateTransaction } = useTransactionsStore();
   const { currency: defaultCurrency } = useCurrencyStore();
 
-  const [type, setType] = useState<TransactionType>(
-    transactionToEdit?.type || 'expense'
-  );
+  const [type, setType] = useState<TransactionType>(seed?.type || 'expense');
   const [categoryName, setCategoryName] = useState(
-    transactionToEdit?.categoryName || categories[0]?.name || ''
+    seed?.categoryName || categories[0]?.name || ''
   );
 
   const {
@@ -46,14 +48,15 @@ export function AddTransactionModal() {
     handleBackspace,
     handleLongPress,
     setAmount,
-  } = useScreenKeyboardHandlers(transactionToEdit?.amount.toString() || '0');
+  } = useScreenKeyboardHandlers(seed?.amount?.toString() || '0');
   const [currency, setCurrency] = useState(
-    transactionToEdit?.currency || defaultCurrency
+    seed?.currency || defaultCurrency
   );
   const [date, setDate] = useState(
-    transactionToEdit?.date || new Date().toISOString().split('T')[0]
+    seed?.date || new Date().toISOString().split('T')[0]
   );
-  const [note, setNote] = useState(transactionToEdit?.note || '');
+  const [note, setNote] = useState(seed?.note || '');
+  const [merchant, setMerchant] = useState(seed?.merchant || '');
 
   const { amountInBaseCurrency } = useCurrencyRateCalculator(currency, amount);
 
@@ -61,16 +64,22 @@ export function AddTransactionModal() {
 
   useEffect(() => {
     if (addTransactionOpen) {
-      setType(transactionToEdit?.type || 'expense');
-      setCategoryName(transactionToEdit?.categoryName || '');
-      setAmount(transactionToEdit?.amount.toString() || '0');
-      setCurrency(transactionToEdit?.currency || defaultCurrency);
-      setDate(
-        transactionToEdit?.date || new Date().toISOString().split('T')[0]
-      );
-      setNote(transactionToEdit?.note || '');
+      const s = transactionToEdit ?? transactionDraft;
+      setType(s?.type || 'expense');
+      setCategoryName(s?.categoryName || '');
+      setAmount(s?.amount?.toString() || '0');
+      setCurrency(s?.currency || defaultCurrency);
+      setDate(s?.date || new Date().toISOString().split('T')[0]);
+      setNote(s?.note || '');
+      setMerchant(s?.merchant || '');
     }
-  }, [addTransactionOpen, defaultCurrency, setAmount, transactionToEdit]);
+  }, [
+    addTransactionOpen,
+    defaultCurrency,
+    setAmount,
+    transactionToEdit,
+    transactionDraft,
+  ]);
 
   const handleClose = () => {
     modalRef.current?.close();
@@ -108,6 +117,7 @@ export function AddTransactionModal() {
         currency,
         date,
         note: note || undefined,
+        merchant: merchant.trim() || undefined,
       });
     } else {
       addTransaction({
@@ -120,11 +130,14 @@ export function AddTransactionModal() {
         currency,
         date,
         note: note || undefined,
+        merchant: merchant.trim() || undefined,
         baseCurrency: defaultCurrency,
+        inputMethod: transactionDraft?.inputMethod ?? 'manual',
       });
     }
 
     setTransactionToEdit(null);
+    setTransactionDraft(null);
     handleClose();
   };
 
@@ -135,20 +148,21 @@ export function AddTransactionModal() {
       onClose={() => {
         setAddTransactionOpen(false);
         setTransactionToEdit(null);
+        setTransactionDraft(null);
       }}
     >
       <View className="flex-row justify-between items-center mb-6">
         <CloseButton onPress={handleClose} />
         <SelectTransactionType type={type} setType={setType} />
-        <Pressable className="size-[35px] rounded-full bg-zinc-900 items-center justify-center active:opacity-70">
-          <Icon icon={MoreHorizontal} className="text-white" size={20} />
+        <Pressable className="size-[35px] rounded-full bg-surface-raised items-center justify-center active:opacity-70">
+          <Icon icon={MoreHorizontal} className="text-text" size={20} />
         </Pressable>
       </View>
 
       <View className="items-center min-h-[15vh] justify-center mb-8 mt-4">
         <AnimatedText
           className={cn(
-            'text-white text-5xl font-semibold',
+            'text-text text-5xl font-semibold',
             amount.length > 3 && 'text-4xl',
             amount.length > 6 && 'text-3xl',
             amount.length > 9 && 'text-2xl',
@@ -162,7 +176,7 @@ export function AddTransactionModal() {
         {currency !== defaultCurrency && amountInBaseCurrency && (
           <AnimatedText
             className={cn(
-              'text-secondary-text text-2xl font-semibold',
+              'text-text-muted text-2xl font-semibold',
               amount.length > 9 && 'text-xl',
               amount.length > 12 && 'text-lg'
             )}
@@ -197,11 +211,17 @@ export function AddTransactionModal() {
         <CurrencyBadge currency={currency} setCurrency={setCurrency} />
       </View>
 
-      {/* Note Input */}
-      <View className="mb-0.5">
+      {/* Merchant + Note inputs */}
+      <View className="gap-1 mb-0.5">
+        <Input
+          value={merchant}
+          className="bg-surface border-0 min-h-[30px]"
+          onChangeText={setMerchant}
+          placeholder="Merchant (optional)"
+        />
         <Input
           value={note}
-          className="bg-dark-gray border-0 min-h-[30px]"
+          className="bg-surface border-0 min-h-[30px]"
           onChangeText={setNote}
           placeholder="Note"
         />
@@ -225,13 +245,16 @@ export function AddTransactionModal() {
         />
       </View>
 
-      {/* Save Button */}
+      {/* Commit Changes */}
       <Button
+        variant="accent"
         onPress={handleSubmit}
         disabled={!categoryName || amount === '0'}
         className="py-4 mb-4 rounded-2xl"
       >
-        <Text className="text-black text-base font-semibold">Save</Text>
+        <Text className="text-background text-base font-semibold uppercase tracking-widest">
+          {transactionToEdit ? 'Save Changes' : 'Commit Changes'}
+        </Text>
       </Button>
     </ModalBase>
   );

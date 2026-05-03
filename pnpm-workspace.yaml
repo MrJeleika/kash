@@ -1,5 +1,0 @@
-packages:
-  # All your mobile apps go here
-  - 'apps/*'
-  # All your shared UI/logic libraries go here
-  - 'packages/*'

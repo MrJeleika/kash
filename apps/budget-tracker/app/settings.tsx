@@ -2,7 +2,6 @@ import { Header } from '@/components/common/header';
 import { SafeInsert } from '@/components/common/safe-insert';
 import { SettingsItem } from '@/components/pages/settings/settings-item';
 import { SettingsSection } from '@/components/pages/settings/settings-section';
-import { SettingsToggle } from '@/components/pages/settings/settings-toggle';
 import { useModalsStore } from '@/store/modals';
 import { useSettingsStore } from '@/store/settings';
 import { useCurrencyStore } from '@/store/currency';
@@ -10,26 +9,22 @@ import {
   LayoutGrid,
   Sun,
   Mic,
-  TrendingDown,
-  Coins,
   Upload,
   Heart,
   Mail,
   Lock,
   FileText,
   Trash2,
+  LogOut,
 } from 'lucide-react-native';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import { supabase } from '@/lib/supabase';
 
 export default function SettingsScreen() {
   const { setCurrenciesModalOpen, setCategoriesModalOpen } = useModalsStore();
-  const {
-    alwaysShowIncomes,
-    roundTotals,
-    setAlwaysShowIncomes,
-    setRoundTotals,
-    voiceLanguage,
-  } = useSettingsStore();
+  const { voiceLanguage } = useSettingsStore();
   const { currency } = useCurrencyStore();
 
   const handleReviewPress = () => {
@@ -52,9 +47,37 @@ export default function SettingsScreen() {
     console.log('Terms of Use');
   };
 
-  const handleDeleteAccountPress = () => {
-    // TODO: Implement delete account
-    console.log('Delete user account');
+  const handleSignOut = async () => {
+    Alert.alert('Sign out', 'You can sign back in any time.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Sign out',
+        style: 'destructive',
+        onPress: async () => {
+          await supabase.auth.signOut();
+          router.replace('/');
+        },
+      },
+    ]);
+  };
+
+  const handleDeleteAccountPress = async () => {
+    Alert.alert(
+      'Delete local data',
+      'This clears every locally stored transaction and signs you out. Server data is unaffected.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await supabase.auth.signOut();
+            await AsyncStorage.clear();
+            router.replace('/');
+          },
+        },
+      ]
+    );
   };
 
   const handleExportPress = () => {
@@ -72,7 +95,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeInsert className="relative h-full bg-black">
+    <SafeInsert className="relative h-full bg-background">
       <Header title="Settings" backButton />
       <ScrollView className="pt-28" showsVerticalScrollIndicator={false}>
         <SettingsSection>
@@ -93,18 +116,6 @@ export default function SettingsScreen() {
             value={voiceLanguage}
             onPress={handleVoiceLanguagePress}
           />
-          <SettingsToggle
-            icon={TrendingDown}
-            label="Always show incomes"
-            value={alwaysShowIncomes}
-            onValueChange={setAlwaysShowIncomes}
-          />
-          <SettingsToggle
-            icon={Coins}
-            label="Round totals"
-            value={roundTotals}
-            onValueChange={setRoundTotals}
-          />
         </SettingsSection>
 
         {/* Export Section */}
@@ -123,19 +134,19 @@ export default function SettingsScreen() {
             label="Review in App Store"
             onPress={handleReviewPress}
           />
-          <View className="h-[1px] bg-zinc-800 ml-14" />
+          <View className="h-[1px] bg-border ml-14" />
           <SettingsItem
             icon={Mail}
             label="Help & Support"
             onPress={handleSupportPress}
           />
-          <View className="h-[1px] bg-zinc-800 ml-14" />
+          <View className="h-[1px] bg-border ml-14" />
           <SettingsItem
             icon={Lock}
             label="Privacy Policy"
             onPress={handlePrivacyPress}
           />
-          <View className="h-[1px] bg-zinc-800 ml-14" />
+          <View className="h-[1px] bg-border ml-14" />
           <SettingsItem
             icon={FileText}
             label="Terms of Use"
@@ -143,11 +154,17 @@ export default function SettingsScreen() {
           />
         </SettingsSection>
 
-        {/* Delete Account Section */}
+        {/* Account Section */}
         <SettingsSection>
           <SettingsItem
+            icon={LogOut}
+            label="Sign out"
+            onPress={handleSignOut}
+          />
+          <View className="h-[1px] bg-border ml-14" />
+          <SettingsItem
             icon={Trash2}
-            label="Delete user account"
+            label="Delete local data"
             variant="destructive"
             onPress={handleDeleteAccountPress}
           />

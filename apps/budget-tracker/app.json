@@ -1,20 +1,22 @@
 {
   "expo": {
-    "name": "budget-tracker",
+    "name": "Kash",
     "slug": "budget-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "budgettracker",
+    "scheme": "kash",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to use speech recognition.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use the microphone."
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use the microphone.",
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to take photos of receipts.",
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to read photos of receipts from your library."
       },
-      "bundleIdentifier": "com.mrjeleika8.budgettracker"
+      "bundleIdentifier": "com.mrjeleika8.kash"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,9 +28,10 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
       ],
-      "package": "com.mrjeleika8.budgettracker"
+      "package": "com.mrjeleika8.kash"
     },
     "web": {
       "output": "static",
@@ -37,6 +40,13 @@
     "plugins": [
       "expo-router",
       "expo-speech-recognition",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to read photos of receipts from your library.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to take photos of receipts."
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -48,7 +58,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -15,8 +15,8 @@ export const PeriodSelectorTrigger = () => {
       onPress={() => setPeriodSelectorModalOpen(true)}
     >
       <View className="flex flex-row items-center gap-1">
-        <Icon icon={CalendarDays} className="text-white size-[14px]" />
-        <Text className="text-white text-sm font-medium">
+        <Icon icon={CalendarDays} className="text-text size-[14px]" />
+        <Text className="text-text text-sm font-medium">
           {currentPeriod.label}
         </Text>
       </View>

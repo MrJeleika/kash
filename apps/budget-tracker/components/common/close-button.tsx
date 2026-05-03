@@ -15,7 +15,7 @@ export const CloseButton = ({ onPress, className }: CloseButtonProps) => {
       variant="secondary"
       className={cn('size-[35px] rounded-full', className)}
     >
-      <Icon icon={X} className="text-white" />
+      <Icon icon={X} className="text-text" />
     </Button>
   );
 };

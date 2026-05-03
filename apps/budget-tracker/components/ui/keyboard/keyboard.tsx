@@ -25,13 +25,13 @@ export const Keyboard = ({
       ))}
       <KeyboardButton
         value={`,`}
-        className="bg-dark-gray"
+        className="bg-surface"
         onClick={() => onClick(`,`)}
       />
       <KeyboardButton value={`0`} onClick={() => onClick(`0`)} />
       <KeyboardButton
-        icon={<Icon icon={Delete} className="text-white w-5" strokeWidth={3} />}
-        className="bg-dark-gray"
+        icon={<Icon icon={Delete} className="text-text w-5" strokeWidth={3} />}
+        className="bg-surface"
         onClick={() => onBackspace()}
         onLongPress={onLongPress}
       />

@@ -16,13 +16,13 @@ export function SettingsToggle({
   label,
   value,
   onValueChange,
-  iconColor = 'text-white',
+  iconColor = 'text-text',
 }: SettingsToggleProps) {
   return (
     <View className="flex-row items-center justify-between px-4 py-4">
       <View className="flex-row items-center flex-1">
         <Icon icon={icon} className={cn('mr-4', iconColor)} size={24} />
-        <Text className="text-base text-white">{label}</Text>
+        <Text className="text-base text-text">{label}</Text>
       </View>
       <Switch
         value={value}

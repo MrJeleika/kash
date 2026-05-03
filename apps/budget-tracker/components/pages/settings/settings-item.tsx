@@ -17,7 +17,7 @@ export function SettingsItem({
   label,
   value,
   onPress,
-  iconColor = 'text-white',
+  iconColor = 'text-text',
   variant = 'default',
 }: SettingsItemProps) {
   return (
@@ -40,14 +40,14 @@ export function SettingsItem({
         <Text
           className={cn(
             'text-base',
-            variant === 'destructive' ? 'text-danger' : 'text-white'
+            variant === 'destructive' ? 'text-danger' : 'text-text'
           )}
         >
           {label}
         </Text>
       </View>
       {value && (
-        <Text className="text-base text-secondary-text ml-2">{value}</Text>
+        <Text className="text-base text-text-muted ml-2">{value}</Text>
       )}
     </Pressable>
   );

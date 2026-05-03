@@ -9,7 +9,7 @@ interface SettingsSectionProps {
 export function SettingsSection({ children, className }: SettingsSectionProps) {
   return (
     <View
-      className={cn('bg-zinc-900 rounded-2xl overflow-hidden mb-4', className)}
+      className={cn('bg-surface-raised rounded-2xl overflow-hidden mb-4', className)}
     >
       {children}
     </View>
