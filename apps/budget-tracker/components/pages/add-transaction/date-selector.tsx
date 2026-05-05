@@ -1,6 +1,7 @@
 import { Calendar } from 'lucide-react-native';
 import { Pressable, Text } from 'react-native';
 import { Icon } from '@/components/ui/icon';
+import { C, FONTS } from '@/utils/theme';
 
 interface DateSelectorProps {
   date: string;
@@ -17,21 +18,34 @@ export function DateSelector({ date, onPress }: DateSelectorProps) {
     if (dateObj.getTime() === today.getTime()) {
       return 'Today';
     }
-
     const options: Intl.DateTimeFormatOptions = {
       month: 'short',
       day: 'numeric',
     };
-    return dateObj.toLocaleDateString('en-US', options);
+    return dateObj.toLocaleDateString('en-US', options).toUpperCase();
   };
 
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-center bg-surface rounded-2xl px-5 py-3 active:opacity-70"
+      className="flex-row items-center gap-2 px-3 py-2.5 active:opacity-70"
+      style={{
+        backgroundColor: C.paperHi,
+        borderWidth: 1,
+        borderColor: C.rule,
+      }}
     >
-      <Icon icon={Calendar} className="text-text mr-2" size={18} />
-      <Text className="text-text text-sm font-medium">{formatDate(date)}</Text>
+      <Icon icon={Calendar} size={14} color={C.text} />
+      <Text
+        style={{
+          fontFamily: FONTS.monoSemi,
+          fontSize: 12,
+          letterSpacing: 0.5,
+          color: C.text,
+        }}
+      >
+        {formatDate(date)}
+      </Text>
     </Pressable>
   );
 }

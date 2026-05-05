@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import React from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { C, FONTS } from '@/utils/theme';
 
 interface TransactionItemProps {
   transaction: Transaction;
@@ -37,11 +38,13 @@ export const TransactionItem = ({
 
   const isExpense = transaction.type === 'expense';
   const isDifferentCurrency = transaction.currency !== transaction.baseCurrency;
-  const sign = isExpense ? '-' : '+';
+  const sign = isExpense ? '−' : '+';
   const amountStr = formatNumberWithSpaces(
     Math.abs(transaction.amountInBaseCurrency).toFixed(2)
   );
   const title = transaction.merchant || transaction.categoryName;
+  const subtitle = `${transaction.categoryName} · ${formatTime(transaction.date)}`;
+  const badgeLabel = transaction.categoryName.slice(0, 4).toUpperCase();
 
   const handlePress = () => {
     setTransactionToEdit({
@@ -68,44 +71,97 @@ export const TransactionItem = ({
     >
       <GestureDetector gesture={tap}>
         <Animated.View
-          style={animatedStyle}
-          className="flex-row items-center justify-between rounded-xl bg-surface px-3 py-3"
+          style={[
+            animatedStyle,
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: C.rule,
+            },
+          ]}
+          className="flex-row items-center gap-3 px-6 py-3"
         >
-          <View className="flex-row items-center gap-3 flex-1">
-            <View
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: category.color }}
-            />
-            <View className="flex-1">
+          <View
+            className="h-8 w-8 items-center justify-center"
+            style={{
+              backgroundColor: isExpense ? C.paperHi : C.greenDim,
+              borderWidth: 1,
+              borderColor: C.rule,
+            }}
+          >
+            {isExpense ? (
               <Text
-                className="text-text font-medium"
-                numberOfLines={1}
+                style={{
+                  fontFamily: FONTS.monoBold,
+                  fontSize: 9,
+                  color: C.text,
+                  letterSpacing: 0.4,
+                }}
               >
-                {title}
+                {badgeLabel}
               </Text>
-              <Text className="text-text-muted text-xs">
-                {formatTime(transaction.date)}
-              </Text>
-            </View>
-          </View>
-          <View className="items-end">
-            <Text
-              className={
-                isExpense ? 'text-text font-semibold' : 'text-text font-semibold'
-              }
-            >
-              {sign}
-              {amountStr} {transaction.baseCurrency?.toUpperCase()}
-            </Text>
-            {isDifferentCurrency && (
-              <Text className="text-text-muted text-xs">
-                {sign}
-                {formatNumberWithSpaces(
-                  Math.abs(transaction.amount).toFixed(2)
-                )}{' '}
-                {transaction.currency?.toUpperCase()}
+            ) : (
+              <Text
+                style={{
+                  color: C.green,
+                  fontWeight: '700',
+                  fontSize: 14,
+                  lineHeight: 16,
+                }}
+              >
+                ↘
               </Text>
             )}
+          </View>
+
+          <View className="flex-1">
+            <Text
+              numberOfLines={1}
+              style={{
+                fontFamily: FONTS.sansMedium,
+                fontSize: 14,
+                color: C.text,
+              }}
+            >
+              {title}
+            </Text>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 11,
+                color: C.textMuted,
+                marginTop: 2,
+              }}
+            >
+              {subtitle}
+            </Text>
+          </View>
+
+          <View className="items-end">
+            <Text
+              style={{
+                fontFamily: FONTS.monoSemi,
+                fontSize: 14,
+                color: isExpense ? C.text : C.green,
+              }}
+            >
+              {sign}
+              {amountStr}
+            </Text>
+            <Text
+              style={{
+                fontFamily: FONTS.mono,
+                fontSize: 9,
+                color: C.textMute,
+                letterSpacing: 1,
+                marginTop: 2,
+              }}
+            >
+              {(isDifferentCurrency
+                ? `${sign}${formatNumberWithSpaces(
+                    Math.abs(transaction.amount).toFixed(2)
+                  )} ${transaction.currency?.toUpperCase()}`
+                : transaction.baseCurrency?.toUpperCase()) ?? ''}
+            </Text>
           </View>
         </Animated.View>
       </GestureDetector>

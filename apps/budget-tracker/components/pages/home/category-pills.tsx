@@ -1,17 +1,19 @@
 import { useCategoriesStore } from '@/store/categories';
 import { useTransactionsStore } from '@/store/transactions';
-import { cn } from '@/utils/shared';
 import { useMemo } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { CategoryIcon } from '@/components/common/category-icon';
+import { Check } from 'lucide-react-native';
+import { Icon } from '@/components/ui/icon';
 import { useModalsStore } from '@/store/modals';
+import { getIconByName } from '@/utils/icon-registry';
+import { C, FONTS } from '@/utils/theme';
 
 interface Props {
   selected: string | null;
   onSelect: (categoryName: string | null) => void;
 }
 
-const VISIBLE_COUNT = 4;
+const VISIBLE_COUNT = 6;
 
 export const CategoryPills = ({ selected, onSelect }: Props) => {
   const { getAllCategories } = useCategoriesStore();
@@ -37,26 +39,42 @@ export const CategoryPills = ({ selected, onSelect }: Props) => {
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
-      className="py-2"
+      contentContainerStyle={{ paddingHorizontal: 24, gap: 18 }}
+      className="py-3"
     >
       {top.map((c) => {
         const active = selected === c.name;
+        const IconComp = getIconByName(c.icon);
         return (
           <Pressable
             key={c.name}
             onPress={() => onSelect(active ? null : c.name)}
-            className="items-center gap-1"
+            className="items-center gap-1.5"
           >
             <View
-              className={cn(
-                'h-12 w-12 rounded-full items-center justify-center',
-                active ? 'bg-accent' : 'bg-surface'
-              )}
+              className="h-12 w-12 rounded-full items-center justify-center"
+              style={{
+                backgroundColor: active ? C.red : 'transparent',
+                borderWidth: active ? 0 : 1,
+                borderColor: C.rule,
+              }}
             >
-              <CategoryIcon category={c} size={28} />
+              {active ? (
+                <Icon icon={Check} size={20} color={C.textOnInk} />
+              ) : (
+                <Icon icon={IconComp} size={20} color={C.ink} />
+              )}
             </View>
-            <Text className="text-xs uppercase tracking-wider text-text-muted">
+            <Text
+              numberOfLines={1}
+              style={{
+                fontFamily: FONTS.monoSemi,
+                fontSize: 9,
+                letterSpacing: 1.3,
+                color: active ? C.ink : C.textMuted,
+                textTransform: 'uppercase',
+              }}
+            >
               {c.name}
             </Text>
           </Pressable>
@@ -64,12 +82,27 @@ export const CategoryPills = ({ selected, onSelect }: Props) => {
       })}
       <Pressable
         onPress={() => setCategoriesModalOpen(true)}
-        className="items-center gap-1"
+        className="items-center gap-1.5"
       >
-        <View className="h-12 w-12 rounded-full items-center justify-center bg-surface">
-          <Text className="text-text font-bold">…</Text>
+        <View
+          className="h-12 w-12 rounded-full items-center justify-center"
+          style={{
+            backgroundColor: 'transparent',
+            borderWidth: 1,
+            borderColor: C.rule,
+          }}
+        >
+          <Text style={{ color: C.ink, fontWeight: '700' }}>…</Text>
         </View>
-        <Text className="text-xs uppercase tracking-wider text-text-muted">
+        <Text
+          style={{
+            fontFamily: FONTS.monoSemi,
+            fontSize: 9,
+            letterSpacing: 1.3,
+            color: C.textMuted,
+            textTransform: 'uppercase',
+          }}
+        >
           More
         </Text>
       </Pressable>

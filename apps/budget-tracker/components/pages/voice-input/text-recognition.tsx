@@ -5,8 +5,8 @@ import { useCategoriesStore } from '@/store/categories';
 import { useModalsStore } from '@/store/modals';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { C, FONTS } from '@/utils/theme';
 
-// Safely import the module with error handling
 let ExpoSpeechRecognitionModule: any = null;
 let useSpeechRecognitionEvent: any = null;
 
@@ -82,8 +82,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
     }
 
     try {
-      const result =
-        await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!result.granted) {
         setError('Microphone permission denied');
         return;
@@ -146,55 +145,155 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
   };
 
   return (
-    <View
-      pointerEvents="box-none"
-      className="absolute bottom-28 left-4 right-4 bg-background rounded-xl border border-border p-4 gap-2"
-    >
-      {error && <Text className="text-accent text-sm">Error: {error}</Text>}
+    <View className="absolute left-0 right-0 px-6" style={{ top: 360, bottom: 130 }}>
+      {/* Live transcript */}
+      <Text
+        style={{
+          fontFamily: FONTS.monoSemi,
+          fontSize: 10,
+          letterSpacing: 1.4,
+          color: C.textOnInkDim,
+          textTransform: 'uppercase',
+          marginBottom: 10,
+        }}
+      >
+        —— Live transcript
+      </Text>
 
-      {isRecognizing && !transcript && (
-        <Text className="text-text-muted italic uppercase tracking-widest text-xs text-center">
-          Listening…
+      {error ? (
+        <Text style={{ color: C.red, fontSize: 13 }}>Error: {error}</Text>
+      ) : transcript ? (
+        <Text
+          style={{
+            fontFamily: FONTS.serif,
+            fontSize: 22,
+            lineHeight: 30,
+            color: C.textOnInk,
+          }}
+        >
+          "{transcript}"
         </Text>
-      )}
-
-      {transcript ? (
-        <Text className="text-text text-center">{transcript}</Text>
+      ) : isRecognizing ? (
+        <Text
+          style={{
+            fontFamily: FONTS.serifItalic,
+            fontSize: 22,
+            color: C.textOnInkDim,
+          }}
+        >
+          Listening for your transaction…
+        </Text>
       ) : null}
 
       {isPending && (
-        <Text className="text-text-muted text-xs text-center uppercase tracking-widest">
-          Processing…
+        <Text
+          className="mt-3"
+          style={{
+            fontFamily: FONTS.monoSemi,
+            fontSize: 10,
+            letterSpacing: 1.4,
+            color: C.textOnInkDim,
+            textTransform: 'uppercase',
+          }}
+        >
+          ● Processing · GPT-4o
         </Text>
       )}
 
+      {/* Extracted preview */}
       {parsed && parsed.length > 0 && (
-        <View className="gap-2">
-          {parsed.map((p, i) => (
-            <View
-              key={i}
-              className="flex-row items-center justify-between bg-surface rounded-lg px-3 py-2"
+        <View
+          className="mt-5 p-4"
+          style={{
+            backgroundColor: C.inkSoft,
+            borderWidth: 1,
+            borderColor: C.inkLine,
+          }}
+        >
+          <View className="flex-row items-center justify-between mb-3">
+            <Text
+              style={{
+                fontFamily: FONTS.monoSemi,
+                fontSize: 10,
+                letterSpacing: 1.4,
+                color: C.textOnInkDim,
+                textTransform: 'uppercase',
+              }}
             >
-              <Text className="text-text">{p.categoryName}</Text>
-              <Text className="text-text font-semibold">
-                {p.type === 'expense' ? '-' : '+'}
-                {p.amount.toFixed(2)} {(p.currency ?? defaultCurrency).toUpperCase()}
-              </Text>
-            </View>
-          ))}
+              Extracted · GPT-4o
+            </Text>
+            <Text
+              style={{
+                fontFamily: FONTS.monoSemi,
+                fontSize: 10,
+                color: C.red,
+              }}
+            >
+              ● {parsed.length} item{parsed.length === 1 ? '' : 's'}
+            </Text>
+          </View>
+          <View>
+            {parsed.map((p, i) => (
+              <View
+                key={i}
+                className="flex-row items-center justify-between py-2"
+                style={{
+                  borderTopWidth: i === 0 ? 0 : 1,
+                  borderTopColor: C.inkLine,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: FONTS.sansMedium,
+                    fontSize: 13,
+                    color: C.textOnInk,
+                  }}
+                >
+                  {p.categoryName}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: FONTS.monoSemi,
+                    fontSize: 14,
+                    color: C.textOnInk,
+                  }}
+                >
+                  {p.type === 'expense' ? '−' : '+'}
+                  {p.amount.toFixed(2)}{' '}
+                  {(p.currency ?? defaultCurrency).toUpperCase()}
+                </Text>
+              </View>
+            ))}
+          </View>
           <Pressable
             onPress={commit}
-            className="bg-accent rounded-lg py-3 items-center mt-1"
+            className="mt-3 h-11 items-center justify-center"
+            style={{ backgroundColor: C.red }}
           >
-            <Text className="text-background uppercase tracking-widest font-semibold">
-              Save expenses
+            <Text
+              style={{
+                fontFamily: FONTS.monoBold,
+                fontSize: 11,
+                letterSpacing: 1.76,
+                color: C.textOnInk,
+                textTransform: 'uppercase',
+              }}
+            >
+              Confirm & save
             </Text>
           </Pressable>
         </View>
       )}
 
       {parsed && parsed.length === 0 && (
-        <Text className="text-text-muted text-center text-xs">
+        <Text
+          className="mt-3 text-center"
+          style={{
+            fontFamily: FONTS.mono,
+            fontSize: 12,
+            color: C.textOnInkDim,
+          }}
+        >
           Couldn't extract anything. Try again?
         </Text>
       )}

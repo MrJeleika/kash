@@ -1,17 +1,23 @@
 import { Header } from '@/components/common/header';
-import { TransactionItem } from '@/components/pages/home/transactions/transaction-item';
-import { Input } from '@/components/ui/input/input';
+import { DayGroup } from '@/components/common/transactions/day-group';
 import { useCategoriesStore } from '@/store/categories';
 import { useTransactionsStore } from '@/store/transactions';
 import {
   groupTransactionsByDate,
   searchTransactions,
 } from '@/utils/transactions';
-import { cn } from '@/utils/shared';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Search } from 'lucide-react-native';
+import { Icon } from '@/components/ui/icon';
+import { C, FONTS } from '@/utils/theme';
 
 const ALL_FILTER = 'ALL';
+
+const dayExpenseTotal = (transactions: { type: string; amountInBaseCurrency: number }[]) =>
+  transactions
+    .filter((t) => t.type === 'expense')
+    .reduce((sum, t) => sum + Math.abs(t.amountInBaseCurrency), 0);
 
 export default function HistoryScreen() {
   const transactions = useTransactionsStore((s) => s.transactions);
@@ -33,29 +39,40 @@ export default function HistoryScreen() {
   );
 
   return (
-    <View className="flex-1 bg-background">
-      <Header
-        backButton
-        centerElement={
-          <Text className="text-text font-semibold text-lg">History</Text>
-        }
-      />
+    <View className="flex-1" style={{ backgroundColor: C.paper }}>
+      <Header backButton title="LEDGER" />
 
-      <ScrollView
-        contentContainerStyle={{ paddingTop: 16, paddingBottom: 48 }}
-        className="px-4"
-      >
-        <Input
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Search transactions…"
-          className="bg-surface border border-border rounded-xl px-4 py-3 text-text"
-        />
+      <View className="px-6 pt-4 pb-2">
+        <View
+          className="flex-row items-center gap-2.5 px-3.5 py-2.5"
+          style={{
+            backgroundColor: C.paperHi,
+            borderWidth: 1,
+            borderColor: C.rule,
+          }}
+        >
+          <Icon icon={Search} size={14} color={C.textMuted} />
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Search merchants, categories, notes…"
+            placeholderTextColor={C.textMuted}
+            style={{
+              flex: 1,
+              fontFamily: FONTS.sans,
+              fontSize: 13,
+              color: C.text,
+              padding: 0,
+            }}
+          />
+        </View>
+      </View>
 
+      <View style={{ borderBottomWidth: 1, borderBottomColor: C.rule }}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 8, paddingVertical: 16 }}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 4 }}
         >
           {filterPills.map((f) => {
             const active = f === ALL_FILTER ? filter === null : filter === f;
@@ -63,18 +80,20 @@ export default function HistoryScreen() {
               <Pressable
                 key={f}
                 onPress={() => setFilter(f === ALL_FILTER ? null : f)}
-                className={cn(
-                  'px-4 py-2 rounded-full border',
-                  active
-                    ? 'bg-primary border-primary'
-                    : 'bg-surface border-border'
-                )}
+                className="px-3.5 py-2"
+                style={{
+                  borderBottomWidth: 2,
+                  borderBottomColor: active ? C.red : 'transparent',
+                }}
               >
                 <Text
-                  className={cn(
-                    'text-xs uppercase tracking-wider font-semibold',
-                    active ? 'text-background' : 'text-text-muted'
-                  )}
+                  style={{
+                    fontFamily: FONTS.monoSemi,
+                    fontSize: 10,
+                    letterSpacing: 1.4,
+                    color: active ? C.ink : C.textMuted,
+                    textTransform: 'uppercase',
+                  }}
                 >
                   {f}
                 </Text>
@@ -82,24 +101,25 @@ export default function HistoryScreen() {
             );
           })}
         </ScrollView>
+      </View>
 
+      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {grouped.length === 0 ? (
-          <View className="items-center py-16">
-            <Text className="text-text-muted">No transactions match.</Text>
+          <View className="items-center py-20">
+            <Text style={{ color: C.textMuted, fontSize: 13 }}>
+              No transactions match.
+            </Text>
           </View>
         ) : (
-          <View className="gap-4">
-            {grouped.map((g) => (
-              <View key={g.date} className="gap-1">
-                <Text className="text-text-muted text-xs uppercase tracking-wider mb-1">
-                  {g.date}
-                </Text>
-                {g.transactions.map((t, i) => (
-                  <TransactionItem key={t.id} transaction={t} index={i} />
-                ))}
-              </View>
-            ))}
-          </View>
+          grouped.map((g) => (
+            <DayGroup
+              key={g.date}
+              date={g.date}
+              total={dayExpenseTotal(g.transactions)}
+              transactions={g.transactions}
+              decimals={2}
+            />
+          ))
         )}
       </ScrollView>
     </View>

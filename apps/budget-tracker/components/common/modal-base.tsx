@@ -98,23 +98,26 @@ export const ModalBase = forwardRef<ModalBaseRef, ModalBaseProps>(
       <GestureHandlerRootView className="absolute inset-0 z-[1000]">
         <Pressable onPress={handleClose} className="flex-1">
           <Animated.View
-            className="absolute inset-0 bg-[#c2b9a7]/50"
-            style={rBackdropStyle}
+            className="absolute inset-0"
+            style={[rBackdropStyle, { backgroundColor: 'rgba(15,14,12,0.5)' }]}
           />
         </Pressable>
         <GestureDetector gesture={gesture}>
           <Animated.View
-            className="absolute w-full bg-[#c2b9a7] rounded-t-3xl"
+            className="absolute w-full"
             style={[
               {
                 height: BOTTOM_SHEET_HEIGHT,
                 top: SCREEN_HEIGHT,
                 paddingTop: Platform.OS === 'ios' ? 12 : 0,
+                backgroundColor: '#EDE5D8',
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
               },
               rBottomSheetStyle,
             ]}
           >
-            <View className={cn('flex-1 px-4 relative', className)}>
+            <View className={cn('flex-1 relative', className)}>
               {children}
             </View>
           </Animated.View>

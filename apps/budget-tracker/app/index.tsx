@@ -5,6 +5,8 @@ import { makeRedirectUri } from 'expo-auth-session';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { C, FONTS } from '@/utils/theme';
+import { KashWordmark } from '@/components/common/header';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -141,119 +143,130 @@ export default function AuthScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background px-6 py-12 justify-between">
-      {/* Header */}
-      <View className="gap-1">
+    <View
+      className="flex-1 px-7 pt-16 pb-10 justify-between"
+      style={{ backgroundColor: C.paper }}
+    >
+      {/* Top: Wordmark + version */}
+      <View className="flex-row items-center justify-between">
+        <KashWordmark size={20} />
         <Text
-          className="text-text font-black tracking-tight"
-          style={{ fontSize: 52, lineHeight: 52 }}
+          style={{
+            fontFamily: FONTS.mono,
+            fontSize: 10,
+            letterSpacing: 1.8,
+            color: C.textMuted,
+          }}
         >
-          KASH
-        </Text>
-        <Text className="text-text-muted text-xs tracking-widest uppercase">
-          Digital{'\n'}Industrialism /{'\n'}V2.0.4
+          v2.4.0
         </Text>
       </View>
 
-      {/* Card */}
-      <View className="bg-surface border border-border rounded-sm p-6 gap-6">
-        {/* Status indicator */}
-        <View className="flex-row items-center gap-2">
-          <View className="w-3 h-3 bg-accent" />
-          <Text className="text-text-muted text-xs tracking-widest uppercase">
-            System Ready
-          </Text>
-        </View>
+      {/* Editorial headline */}
+      <View>
+        <Text
+          className="mb-4"
+          style={{
+            fontFamily: FONTS.monoSemi,
+            fontSize: 10,
+            letterSpacing: 1.4,
+            color: C.textMuted,
+            textTransform: 'uppercase',
+          }}
+        >
+          —— Access ledger · 001
+        </Text>
+        <Text
+          style={{
+            fontFamily: FONTS.serif,
+            fontSize: 56,
+            lineHeight: 56 * 0.95,
+            color: C.ink,
+            letterSpacing: -1.1,
+          }}
+        >
+          Money,{'\n'}
+          <Text style={{ fontFamily: FONTS.serifItalic }}>quietly</Text>
+          {'\n'}accounted for.
+        </Text>
+        <Text
+          className="mt-5"
+          style={{
+            fontSize: 14,
+            color: C.textMuted,
+            lineHeight: 21,
+            maxWidth: 290,
+          }}
+        >
+          Voice it, snap it, type it. Kash files every coin in the right column —
+          so you don't have to.
+        </Text>
+      </View>
 
-        {/* Heading */}
-        <View className="gap-3">
-          <Text
-            className="text-text font-bold leading-tight"
-            style={{ fontSize: 28 }}
-          >
-            Initialize secure authentication protocol...
-          </Text>
-          <View className="h-px bg-border" />
-        </View>
-
-        {/* Google button */}
+      {/* Auth */}
+      <View className="gap-3">
         <Pressable
           onPress={handleGoogleSignIn}
           disabled={loading}
-          className="bg-accent active:bg-accent-hover rounded-sm py-4 px-6 flex-row items-center justify-between"
-          style={({ pressed }) => ({ opacity: pressed ? 0.88 : 1 })}
+          className="h-14 flex-row items-center justify-center gap-2.5"
+          style={({ pressed }) => ({
+            backgroundColor: C.paperHi,
+            borderWidth: 1,
+            borderColor: C.rule,
+            borderRadius: 4,
+            opacity: pressed ? 0.85 : 1,
+          })}
         >
-          <Text className="text-background font-semibold text-base">
-            Continue with Google
-          </Text>
           {loading ? (
-            <ActivityIndicator color="#D6D1C4" size="small" />
+            <ActivityIndicator color={C.ink} size="small" />
           ) : (
-            <Text className="text-background font-bold text-lg">→</Text>
+            <>
+              <Text style={{ fontSize: 14 }}>𝙶</Text>
+              <Text
+                style={{
+                  fontFamily: FONTS.monoSemi,
+                  fontSize: 12,
+                  letterSpacing: 1.92,
+                  color: C.ink,
+                }}
+              >
+                CONTINUE WITH GOOGLE
+              </Text>
+            </>
           )}
         </Pressable>
 
         {error && (
-          <Text className="text-accent text-xs text-center">{error}</Text>
+          <Text
+            style={{
+              fontFamily: FONTS.mono,
+              fontSize: 11,
+              color: C.red,
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </Text>
         )}
 
-        {/* Manual bypass section */}
-        <View className="gap-2">
-          <Text className="text-text-muted text-xs tracking-widest uppercase">
-            Manual Bypass
-          </Text>
-          <Text className="text-text text-sm">Corporate Identity Provider</Text>
-        </View>
-
-        {/* Technical footer */}
-        <View className="gap-1 pt-2 border-t border-border">
-          <Text className="text-text-muted" style={{ fontSize: 10 }}>
-            RSA-4096 / AES-256-GCM / SHARED
-          </Text>
-          <Text className="text-text-muted" style={{ fontSize: 10 }}>
-            LAT: 40.7128° N, LONG: 74.0060° W
-          </Text>
-        </View>
-      </View>
-
-      {/* Bottom status bar */}
-      <View className="flex-row items-center justify-between flex-wrap gap-1">
-        <View className="flex-row items-center gap-1">
-          <Text className="text-text-muted uppercase tracking-widest text-xs">
-            Status:{' '}
-          </Text>
-          <Text
-            className="text-accent font-bold uppercase tracking-widest"
-            style={{ fontSize: 10 }}
-          >
-            Encrypted
-          </Text>
-        </View>
         <Text
-          className="text-text-muted uppercase tracking-widest"
-          style={{ fontSize: 10 }}
+          className="mt-2 text-center"
+          style={{
+            fontSize: 11,
+            color: C.textMute,
+            lineHeight: 17,
+          }}
         >
-          Version: <Text className="text-text font-bold">K_ALPHA_8</Text>
-        </Text>
-        <Text
-          className="text-text-muted uppercase tracking-widest"
-          style={{ fontSize: 10 }}
-        >
-          Access: <Text className="text-text font-bold">GLOBAL-1</Text>
-        </Text>
-      </View>
-
-      {/* Legal footer */}
-      <View className="flex-row gap-4 justify-center">
-        {['LEGAL', 'PRIVACY', 'SYSTEM LOG'].map((label) => (
-          <Text
-            key={label}
-            className="text-text-muted"
-            style={{ fontSize: 10 }}
-          >
-            {label}
+          By continuing you agree to our{' '}
+          <Text style={{ color: C.text, textDecorationLine: 'underline' }}>
+            Terms
+          </Text>{' '}
+          and{' '}
+          <Text style={{ color: C.text, textDecorationLine: 'underline' }}>
+            Privacy
           </Text>
-        ))}
+          .
+        </Text>
       </View>
     </View>
   );

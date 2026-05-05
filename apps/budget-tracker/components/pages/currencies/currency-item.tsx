@@ -1,16 +1,17 @@
 import { Icon } from '@/components/ui/icon';
-import { cn } from '@/utils/shared';
-import { Heart } from 'lucide-react-native';
+import { Star } from 'lucide-react-native';
 import { memo } from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import { C, FONTS } from '@/utils/theme';
 
 interface CurrencyItemProps {
   currencyCode: string;
   currencyName: string;
   isFavorite: boolean;
   isSelected: boolean;
-  onClick: () => void;
-  onFavoriteClick: () => void;
+  onSelect: (code: string) => void;
+  onToggleFavorite: (code: string) => void;
+  isLast?: boolean;
 }
 
 export const CurrencyItem = memo(
@@ -19,55 +20,94 @@ export const CurrencyItem = memo(
     currencyName,
     isFavorite,
     isSelected,
-    onClick,
-    onFavoriteClick,
+    onSelect,
+    onToggleFavorite,
+    isLast,
   }: CurrencyItemProps) => {
-    const textColor = isSelected ? 'text-background' : 'text-text';
-    const iconFill = isFavorite ? (isSelected ? '#D6D1C4' : '#CC2200') : undefined;
-    const iconColor = isSelected ? 'text-background' : 'text-accent';
-    const iconFillClass = isFavorite
-      ? isSelected
-        ? 'fill-background'
-        : 'fill-accent'
-      : '';
+    const code = currencyCode.toUpperCase();
+    const tileText = code.slice(0, 3);
+    const starOn = isFavorite || isSelected;
 
     return (
       <Pressable
-        onPress={onClick}
-        className={cn(
-          'flex items-center flex-row gap-3 px-3 py-2 rounded-xl',
-          isSelected ? 'bg-primary' : 'bg-surface'
-        )}
-        style={({ pressed }) => ({
-          opacity: pressed ? 0.7 : 1,
-        })}
+        onPress={() => onSelect(currencyCode)}
+        className="flex-row items-center gap-3 px-6 py-2 active:opacity-60"
+        style={{
+          borderBottomWidth: isLast ? 0 : 1,
+          borderBottomColor: C.rule,
+        }}
       >
+        <View
+          className="size-8 items-center justify-center"
+          style={{
+            backgroundColor: C.paper,
+            borderWidth: 1,
+            borderColor: C.rule,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: FONTS.monoBold,
+              fontSize: 10,
+              color: C.ink,
+              letterSpacing: 0.5,
+            }}
+          >
+            {tileText}
+          </Text>
+        </View>
+
+        <View className="flex-1 flex-row items-baseline gap-2">
+          <Text
+            style={{
+              fontFamily: FONTS.monoBold,
+              fontSize: 12,
+              letterSpacing: 1.68,
+              color: C.ink,
+            }}
+          >
+            {code}
+          </Text>
+          <Text
+            numberOfLines={1}
+            className="flex-1"
+            style={{
+              fontFamily: FONTS.sansMedium,
+              fontSize: 13,
+              color: C.text,
+            }}
+          >
+            {currencyName}
+          </Text>
+          {isSelected && (
+            <View className="px-1.5 py-px" style={{ backgroundColor: C.ink }}>
+              <Text
+                style={{
+                  fontFamily: FONTS.monoBold,
+                  fontSize: 8,
+                  letterSpacing: 1.12,
+                  color: C.textOnInk,
+                }}
+              >
+                PRIMARY
+              </Text>
+            </View>
+          )}
+        </View>
+
         <Pressable
-          onPress={onFavoriteClick}
-          style={({ pressed }) => ({
-            opacity: pressed ? 0.7 : 1,
-          })}
+          onPress={() => onToggleFavorite(currencyCode)}
+          hitSlop={10}
+          className="active:opacity-50"
         >
           <Icon
-            icon={Heart}
-            fill={iconFill}
-            className={cn(iconColor, iconFillClass)}
+            icon={Star}
+            size={16}
+            color={starOn ? C.red : C.textMute}
+            fill={starOn ? C.red : 'transparent'}
+            strokeWidth={1.4}
           />
         </Pressable>
-        <Text
-          className={cn('text-semibold uppercase', textColor)}
-          style={{ flexShrink: 0 }}
-          ellipsizeMode="clip"
-        >
-          {currencyCode}
-        </Text>
-        <Text
-          className={cn('flex-1', textColor)}
-          numberOfLines={1}
-          ellipsizeMode="clip"
-        >
-          {currencyName}
-        </Text>
       </Pressable>
     );
   }

@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import type { DailyBucket } from '@/hooks/insights/useInsights';
+import { C, FONTS } from '@/utils/theme';
 
 interface Props {
   data: DailyBucket[];
@@ -12,7 +13,9 @@ export const DailyTrend = ({ data, width = 320, height = 140 }: Props) => {
   if (data.length === 0) {
     return (
       <View className="py-8 items-center">
-        <Text className="text-text-muted">No daily activity yet.</Text>
+        <Text style={{ color: C.textMuted, fontSize: 13 }}>
+          No daily activity yet.
+        </Text>
       </View>
     );
   }
@@ -22,7 +25,7 @@ export const DailyTrend = ({ data, width = 320, height = 140 }: Props) => {
   const barWidth = Math.max(2, Math.floor(width / data.length) - 2);
 
   return (
-    <View className="bg-surface rounded-xl p-3">
+    <View>
       <Svg width={width} height={height}>
         {data.map((d, i) => {
           const h = (d.total / max) * (height - 16);
@@ -35,16 +38,34 @@ export const DailyTrend = ({ data, width = 320, height = 140 }: Props) => {
               y={y}
               width={barWidth}
               height={h}
-              rx={2}
-              fill={i === peakIndex ? '#CC2200' : '#7A7469'}
+              fill={i === peakIndex ? C.red : C.ink}
             />
           );
         })}
       </Svg>
       {data.length > 1 && (
-        <View className="flex-row justify-between mt-1">
-          <Text className="text-text-muted text-xs">{data[0].date.slice(5)}</Text>
-          <Text className="text-text-muted text-xs">
+        <View
+          className="flex-row justify-between mt-2 pt-2"
+          style={{ borderTopWidth: 1, borderTopColor: C.rule }}
+        >
+          <Text
+            style={{
+              fontFamily: FONTS.monoSemi,
+              fontSize: 10,
+              letterSpacing: 1,
+              color: C.textMuted,
+            }}
+          >
+            {data[0].date.slice(5)}
+          </Text>
+          <Text
+            style={{
+              fontFamily: FONTS.monoSemi,
+              fontSize: 10,
+              letterSpacing: 1,
+              color: C.textMuted,
+            }}
+          >
             {data[data.length - 1].date.slice(5)}
           </Text>
         </View>

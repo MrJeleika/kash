@@ -1,25 +1,27 @@
 import * as React from 'react';
-import { Pressable, Text, TouchableOpacityProps } from 'react-native';
+import { Pressable, Text, TouchableOpacityProps, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/utils/shared';
+import { C, FONTS } from '@/utils/theme';
 
 const buttonVariants = cva(
-  'flex-row items-center justify-center rounded-lg disabled:opacity-50 active:opacity-70',
+  'flex-row items-center justify-center disabled:opacity-50 active:opacity-70',
   {
     variants: {
       variant: {
-        default: 'bg-primary',
-        accent: 'bg-accent',
-        destructive: 'bg-accent',
-        outline: 'border border-border bg-background',
-        secondary: 'bg-surface',
-        ghost: 'bg-transparent',
-        link: 'bg-transparent',
+        default: '',
+        accent: '',
+        destructive: '',
+        outline: 'border',
+        secondary: 'border',
+        ghost: '',
+        link: '',
       },
       size: {
-        default: '',
-        cta: 'w-full p-4 rounded-xl',
+        default: 'h-12 px-5 rounded-[4px]',
+        cta: 'w-full h-14 px-5 rounded-[4px]',
+        sm: 'h-10 px-4 rounded-[4px]',
       },
     },
     defaultVariants: {
@@ -29,22 +31,15 @@ const buttonVariants = cva(
   }
 );
 
-const textVariants = cva('font-medium', {
-  variants: {
-    variant: {
-      default: 'text-background',
-      accent: 'text-background',
-      destructive: 'text-background',
-      outline: 'text-text',
-      secondary: 'text-text',
-      ghost: 'text-text',
-      link: 'text-accent',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-});
+const variantStyles: Record<string, { bg: string; fg: string; border?: string }> = {
+  default: { bg: C.ink, fg: C.textOnInk },
+  accent: { bg: C.red, fg: C.textOnInk },
+  destructive: { bg: C.red, fg: C.textOnInk },
+  outline: { bg: 'transparent', fg: C.text, border: C.ink },
+  secondary: { bg: C.paperHi, fg: C.text, border: C.rule },
+  ghost: { bg: 'transparent', fg: C.text },
+  link: { bg: 'transparent', fg: C.red },
+};
 
 type ButtonProps = TouchableOpacityProps &
   VariantProps<typeof buttonVariants> & {
@@ -55,23 +50,41 @@ type ButtonProps = TouchableOpacityProps &
 
 function Button({
   className,
-  textClassName,
   variant = 'default',
   size = 'default',
   children,
+  style,
   ...props
 }: ButtonProps) {
+  const v = variantStyles[variant ?? 'default'];
   return (
     <Pressable
       className={cn(buttonVariants({ variant, size, className }))}
+      style={[
+        { backgroundColor: v.bg, borderColor: v.border ?? 'transparent' },
+        style as any,
+      ]}
       {...props}
     >
       {typeof children === 'string' ? (
-        <Text className={cn(textVariants({ variant }), textClassName)}>
+        <Text
+          style={{
+            fontFamily: FONTS.monoBold,
+            color: v.fg,
+            fontSize: 11,
+            letterSpacing: 1.76,
+            textTransform: 'uppercase',
+          }}
+        >
           {children}
         </Text>
       ) : (
-        children
+        <View
+          className="flex-row items-center justify-center gap-2"
+          style={{ flexDirection: 'row' }}
+        >
+          {children}
+        </View>
       )}
     </Pressable>
   );

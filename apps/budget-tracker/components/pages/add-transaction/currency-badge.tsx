@@ -1,6 +1,7 @@
 import { useCurrencyStore } from '@/store/currency';
 import { Pressable } from 'react-native';
 import Animated, { FadeInUp, FadeOutDown } from 'react-native-reanimated';
+import { C, FONTS } from '@/utils/theme';
 
 interface CurrencyBadgeProps {
   currency: string;
@@ -21,15 +22,25 @@ export function CurrencyBadge({ currency, setCurrency }: CurrencyBadgeProps) {
   return (
     <Pressable
       onPress={handlePress}
-      className="bg-surface rounded-2xl flex items-center justify-center px-2 min-w-[60px] overflow-hidden"
+      className="items-center justify-center px-3 py-2.5 min-w-[60px]"
+      style={{
+        backgroundColor: C.paperHi,
+        borderWidth: 1,
+        borderColor: C.rule,
+      }}
     >
       <Animated.Text
         key={currency}
         entering={FadeInUp.duration(200)}
         exiting={FadeOutDown.duration(150)}
-        className="text-text text-sm font-semibold"
+        style={{
+          fontFamily: FONTS.monoSemi,
+          fontSize: 12,
+          letterSpacing: 1,
+          color: C.text,
+        }}
       >
-        {currency.toUpperCase()}
+        {currency?.toUpperCase()}
       </Animated.Text>
     </Pressable>
   );

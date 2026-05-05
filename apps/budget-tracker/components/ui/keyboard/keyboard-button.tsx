@@ -1,12 +1,11 @@
-import { Text } from 'react-native';
-import { Button } from '../button/button';
-import { cn } from '@/utils/shared';
+import { Pressable, Text, View } from 'react-native';
+import { C, FONTS } from '@/utils/theme';
 
 export interface KeyboardButtonProps {
   onClick: () => void;
   value?: string;
   icon?: React.ReactNode;
-  className?: string;
+  dim?: boolean;
   onLongPress?: () => void;
 }
 
@@ -14,21 +13,35 @@ export const KeyboardButton = ({
   onClick,
   value,
   icon,
-  className,
+  dim = false,
   onLongPress,
 }: KeyboardButtonProps) => {
   return (
-    <Button
+    <Pressable
+      onPress={onClick}
       onLongPress={onLongPress}
-      variant={'secondary'}
-      className={cn(
-        'flex rounded-2xl items-center justify-center py-6',
-        className
-      )}
-      style={{ width: '33%' }}
-      onPress={() => onClick()}
+      className="items-center justify-center active:opacity-60"
+      style={{
+        flex: 1,
+        height: 56,
+        backgroundColor: dim ? 'transparent' : C.paperHi,
+        borderWidth: dim ? 0 : 1,
+        borderColor: C.rule,
+      }}
     >
-      <Text className="text-text text-2xl font-normal">{value ?? icon}</Text>
-    </Button>
+      {icon ? (
+        <View>{icon}</View>
+      ) : (
+        <Text
+          style={{
+            fontFamily: FONTS.monoMedium,
+            fontSize: 22,
+            color: C.ink,
+          }}
+        >
+          {value}
+        </Text>
+      )}
+    </Pressable>
   );
 };

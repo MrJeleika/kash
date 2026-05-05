@@ -26,7 +26,7 @@ export function WalletSelector({
       <View className="flex-1">
         <Text className="text-text text-sm font-medium">{walletName}</Text>
         <Text className="text-text-muted text-xs">
-          -{amount} {currency.toUpperCase()}
+          -{amount} {currency?.toUpperCase()}
         </Text>
       </View>
     </Pressable>

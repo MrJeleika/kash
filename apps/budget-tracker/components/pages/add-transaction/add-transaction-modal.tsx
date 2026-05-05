@@ -1,24 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, TextInput } from 'react-native';
 import { TransactionType } from '@/types/transactions';
 import { useTransactionsStore } from '@/store/transactions';
 import { useModalsStore } from '@/store/modals';
 import { useCurrencyStore } from '@/store/currency';
-import { Button } from '@/components/ui/button/button';
 import { ModalBase, ModalBaseRef } from '@/components/common/modal-base';
-import { CloseButton } from '@/components/common/close-button';
 import { SelectTransactionType } from '@/components/common/select-transaction-type';
 import { Keyboard } from '@/components/ui/keyboard/keyboard';
-import { AnimatedText, cn } from '@/utils/shared';
+import { AnimatedText } from '@/utils/shared';
 import SelectCategory from './category/select-category';
 import { DateSelector } from './date-selector';
 import { CurrencyBadge } from './currency-badge';
-import { MoreHorizontal } from 'lucide-react-native';
+import { X, NotebookPen } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { useCurrencyRateCalculator } from '@/hooks/currencies/useCurrencyRateCalculator';
-import { Input } from '@/components/ui/input/input';
 import { useScreenKeyboardHandlers } from '@/hooks/keyboard/useScreenKeyboardHandlers';
 import { useCategoriesStore } from '@/store/categories';
+import { Eyebrow } from '@/components/ui/typography';
+import { C, FONTS } from '@/utils/theme';
 
 export function AddTransactionModal() {
   const modalRef = useRef<ModalBaseRef>(null);
@@ -49,17 +48,13 @@ export function AddTransactionModal() {
     handleLongPress,
     setAmount,
   } = useScreenKeyboardHandlers(seed?.amount?.toString() || '0');
-  const [currency, setCurrency] = useState(
-    seed?.currency || defaultCurrency
-  );
+  const [currency, setCurrency] = useState(seed?.currency || defaultCurrency);
   const [date, setDate] = useState(
     seed?.date || new Date().toISOString().split('T')[0]
   );
   const [note, setNote] = useState(seed?.note || '');
-  const [merchant, setMerchant] = useState(seed?.merchant || '');
 
   const { amountInBaseCurrency } = useCurrencyRateCalculator(currency, amount);
-
   const isDifferentCurrency = currency !== defaultCurrency;
 
   useEffect(() => {
@@ -71,7 +66,6 @@ export function AddTransactionModal() {
       setCurrency(s?.currency || defaultCurrency);
       setDate(s?.date || new Date().toISOString().split('T')[0]);
       setNote(s?.note || '');
-      setMerchant(s?.merchant || '');
     }
   }, [
     addTransactionOpen,
@@ -86,24 +80,12 @@ export function AddTransactionModal() {
   };
 
   const handleSubmit = () => {
-    if (!categoryName || !amount || !date) {
-      console.log('Missing required fields');
-      return;
-    }
-
-    if (isDifferentCurrency && !amountInBaseCurrency) {
-      console.log('Missing amount in base currency');
-      return;
-    }
-
-    const amountNum = parseFloat(amount);
-    if (isNaN(amountNum) || amountNum <= 0) {
-      console.log('Invalid amount');
-      return;
-    }
+    if (!categoryName || !amount || !date) return;
+    if (isDifferentCurrency && !amountInBaseCurrency) return;
+    const amountNum = parseFloat(amount.replace(',', '.'));
+    if (isNaN(amountNum) || amountNum <= 0) return;
 
     const isExpense = type === 'expense';
-
     const amountInBaseCurrencyNum = isDifferentCurrency
       ? Number(amountInBaseCurrency)
       : amountNum;
@@ -117,7 +99,6 @@ export function AddTransactionModal() {
         currency,
         date,
         note: note || undefined,
-        merchant: merchant.trim() || undefined,
       });
     } else {
       addTransaction({
@@ -130,7 +111,6 @@ export function AddTransactionModal() {
         currency,
         date,
         note: note || undefined,
-        merchant: merchant.trim() || undefined,
         baseCurrency: defaultCurrency,
         inputMethod: transactionDraft?.inputMethod ?? 'manual',
       });
@@ -140,6 +120,8 @@ export function AddTransactionModal() {
     setTransactionDraft(null);
     handleClose();
   };
+
+  const amountTooLong = amount.length > 8;
 
   return (
     <ModalBase
@@ -151,111 +133,152 @@ export function AddTransactionModal() {
         setTransactionDraft(null);
       }}
     >
-      <View className="flex-row justify-between items-center mb-6">
-        <CloseButton onPress={handleClose} />
-        <SelectTransactionType type={type} setType={setType} />
-        <Pressable className="size-[35px] rounded-full bg-surface-raised items-center justify-center active:opacity-70">
-          <Icon icon={MoreHorizontal} className="text-text" size={20} />
-        </Pressable>
-      </View>
-
-      <View className="items-center min-h-[15vh] justify-center mb-8 mt-4">
-        <AnimatedText
-          className={cn(
-            'text-text text-5xl font-semibold',
-            amount.length > 3 && 'text-4xl',
-            amount.length > 6 && 'text-3xl',
-            amount.length > 9 && 'text-2xl',
-            amount.length > 12 && 'text-xl'
-          )}
-          suffix={` ${currency?.toUpperCase()}`}
-          isNumber={true}
-        >
-          {amount}
-        </AnimatedText>
-        {currency !== defaultCurrency && amountInBaseCurrency && (
-          <AnimatedText
-            className={cn(
-              'text-text-muted text-2xl font-semibold',
-              amount.length > 9 && 'text-xl',
-              amount.length > 12 && 'text-lg'
-            )}
-            suffix={` ${defaultCurrency?.toUpperCase()}`}
-            isNumber={true}
-          >
-            {amountInBaseCurrency}
-          </AnimatedText>
-        )}
-      </View>
-
-      {/* Wallet, Date, and Currency Row */}
-      <View className="flex-row justify-between  mb-0.5">
-        {/* <View className="flex-1">
-          <WalletSelector
-            walletName="Wallet"
-            amount={walletBalance}
-            currency={currency}
-            onPress={() => {
-              // TODO: Open wallet selector
-              console.log('Open wallet selector');
-            }}
-          />
-        </View> */}
-        <DateSelector
-          date={date}
-          onPress={() => {
-            // TODO: Open date picker
-            console.log('Open date picker');
-          }}
-        />
-        <CurrencyBadge currency={currency} setCurrency={setCurrency} />
-      </View>
-
-      {/* Merchant + Note inputs */}
-      <View className="gap-1 mb-0.5">
-        <Input
-          value={merchant}
-          className="bg-surface border-0 min-h-[30px]"
-          onChangeText={setMerchant}
-          placeholder="Merchant (optional)"
-        />
-        <Input
-          value={note}
-          className="bg-surface border-0 min-h-[30px]"
-          onChangeText={setNote}
-          placeholder="Note"
-        />
-      </View>
-
-      {/* Category Selector */}
-      <View className="mb-2">
-        <SelectCategory
-          type={type}
-          selectedCategory={categoryName}
-          onSelectCategory={setCategoryName}
-        />
-      </View>
-
-      {/* Keyboard */}
-      <View className="mb-4">
-        <Keyboard
-          onClick={handleKeyboardClick}
-          onBackspace={handleBackspace}
-          onLongPress={handleLongPress}
-        />
-      </View>
-
-      {/* Commit Changes */}
-      <Button
-        variant="accent"
-        onPress={handleSubmit}
-        disabled={!categoryName || amount === '0'}
-        className="py-4 mb-4 rounded-2xl"
+      {/* Top bar: close + segmented + spacer */}
+      <View
+        className="flex-row items-center justify-between px-5 pt-3 pb-3"
+        style={{ borderBottomWidth: 1, borderBottomColor: C.rule }}
       >
-        <Text className="text-background text-base font-semibold uppercase tracking-widest">
-          {transactionToEdit ? 'Save Changes' : 'Commit Changes'}
+        <Pressable onPress={handleClose} hitSlop={10}>
+          <Icon icon={X} size={20} color={C.ink} />
+        </Pressable>
+        <Text
+          style={{
+            fontFamily: FONTS.monoBold,
+            fontSize: 12,
+            letterSpacing: 2.16,
+            color: C.ink,
+            textTransform: 'uppercase',
+          }}
+        >
+          New Entry
         </Text>
-      </Button>
+        <View style={{ width: 20 }} />
+      </View>
+
+      <View className="flex-1">
+        {/* Expense / Income segmented */}
+        <View className="px-5 pt-4 items-center">
+          <SelectTransactionType type={type} setType={setType} />
+        </View>
+
+        {/* Big amount — flexes to fill available height */}
+        <View className="flex-1 px-5 items-center justify-center">
+          <Eyebrow>Amount · {currency?.toUpperCase()}</Eyebrow>
+          <View className="flex-row items-baseline justify-center mt-1.5">
+            <Text
+              style={{
+                fontFamily: FONTS.monoMedium,
+                fontSize: amountTooLong ? 22 : 26,
+                color: C.textMute,
+              }}
+            >
+              {currency === 'usd' ? '$' : currency === 'eur' ? '€' : ''}
+            </Text>
+            <AnimatedText
+              style={{
+                fontFamily: FONTS.monoBold,
+                fontSize: amountTooLong ? 48 : 64,
+                color: C.ink,
+                lineHeight: amountTooLong ? 50 : 66,
+                letterSpacing: -2,
+              }}
+              isNumber
+            >
+              {amount}
+            </AnimatedText>
+          </View>
+          {isDifferentCurrency && amountInBaseCurrency && (
+            <Text
+              className="mt-1"
+              style={{
+                fontFamily: FONTS.mono,
+                fontSize: 11,
+                color: C.textMuted,
+                letterSpacing: 0.5,
+              }}
+            >
+              ≈ {amountInBaseCurrency} {defaultCurrency?.toUpperCase()}
+            </Text>
+          )}
+        </View>
+
+        {/* Note + Date row */}
+        <View className="flex-row gap-2 px-4 pt-3 pb-2">
+          <View
+            className="flex-1 flex-row items-center gap-2 px-3 py-2.5"
+            style={{
+              backgroundColor: C.paperHi,
+              borderWidth: 1,
+              borderColor: C.rule,
+            }}
+          >
+            <Icon
+              icon={NotebookPen}
+              size={14}
+              color={C.textMuted}
+              strokeWidth={1.6}
+            />
+            <TextInput
+              value={note}
+              onChangeText={setNote}
+              placeholder="Note"
+              placeholderTextColor={C.textMute}
+              style={{
+                flex: 1,
+                fontFamily: FONTS.sans,
+                fontSize: 13,
+                color: C.text,
+                padding: 0,
+              }}
+            />
+          </View>
+          <DateSelector date={date} />
+          <CurrencyBadge currency={currency} setCurrency={setCurrency} />
+        </View>
+
+        {/* Categories — horizontal scroll */}
+        <View className="pt-2 pb-2">
+          <SelectCategory
+            type={type}
+            selectedCategory={categoryName}
+            onSelectCategory={setCategoryName}
+          />
+        </View>
+
+        {/* Keyboard */}
+        <View className="px-4 pt-2 pb-3">
+          <Keyboard
+            onClick={handleKeyboardClick}
+            onBackspace={handleBackspace}
+            onLongPress={handleLongPress}
+          />
+        </View>
+
+        {/* Save button */}
+        <View className="px-4 pt-1 pb-2">
+          <Pressable
+            onPress={handleSubmit}
+            disabled={!categoryName || amount === '0'}
+            className="h-14 items-center justify-center active:opacity-80"
+            style={{
+              backgroundColor: C.ink,
+              opacity: !categoryName || amount === '0' ? 0.5 : 1,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: FONTS.monoBold,
+                fontSize: 12,
+                letterSpacing: 2.64,
+                color: C.textOnInk,
+                textTransform: 'uppercase',
+              }}
+            >
+              {transactionToEdit ? 'Save Changes' : 'Save Transaction'}
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     </ModalBase>
   );
 }

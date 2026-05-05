@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button/button';
-import { Alert, View } from 'react-native';
+import { Pressable, Alert, View } from 'react-native';
 import { AudioLines, Plus, ScanText } from 'lucide-react-native';
 import { useModalsStore } from '@/store/modals';
 import Animated, {
@@ -11,6 +10,25 @@ import { useEffect } from 'react';
 import { CloseButton } from '@/components/common/close-button';
 import { useOcrReceipt } from '@/hooks/photo/useOcrReceipt';
 import { captureReceipt } from '@/utils/photo';
+import { C } from '@/utils/theme';
+
+const sideButtonStyle = {
+  backgroundColor: C.ink,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.18,
+  shadowRadius: 14,
+  elevation: 6,
+};
+
+const fabStyle = {
+  backgroundColor: C.red,
+  shadowColor: C.red,
+  shadowOffset: { width: 0, height: 8 },
+  shadowOpacity: 0.45,
+  shadowRadius: 20,
+  elevation: 10,
+};
 
 export function ActionButtons() {
   const {
@@ -91,7 +109,7 @@ export function ActionButtons() {
         merchant: tx.merchant || undefined,
         date: tx.date || new Date().toISOString().split('T')[0],
         categoryName: tx.categoryName || undefined,
-        baseCurrency: undefined, // filled by modal from currency store
+        baseCurrency: undefined,
         inputMethod: 'photo',
       });
       setAddTransactionOpen(true);
@@ -105,43 +123,52 @@ export function ActionButtons() {
   };
 
   return (
-    <View className="absolute bottom-5 flex flex-row gap-5 justify-center items-center left-1/2 -translate-x-1/2 z-50">
+    <View
+      className="absolute bottom-7 left-0 right-0 flex flex-row gap-4 justify-center items-center z-50"
+      pointerEvents="box-none"
+    >
       <Animated.View style={scanTextButtonStyle}>
-        <Button
-          className="size-[50px] rounded-full"
+        <Pressable
+          className="size-[52px] rounded-full items-center justify-center active:opacity-70"
+          style={sideButtonStyle}
           onPress={handlePhoto}
           disabled={ocr.isPending}
         >
-          <ScanText className="size-[35px]" strokeWidth={1.5} />
-        </Button>
+          <ScanText size={20} color={C.textOnInk} strokeWidth={1.6} />
+        </Pressable>
       </Animated.View>
+
       <Animated.View style={addTransactionButtonStyle}>
-        <Button
-          variant="accent"
-          className="size-[60px] rounded-full"
+        <Pressable
+          className="size-[64px] rounded-full items-center justify-center active:opacity-80"
+          style={fabStyle}
           onPress={() => setAddTransactionOpen(true)}
         >
-          <Plus size={30} strokeWidth={1.5} color="#D6D1C4" />
-        </Button>
+          <Plus size={26} color={C.textOnInk} strokeWidth={2} />
+        </Pressable>
       </Animated.View>
+
       <Animated.View style={voiceButtonStyle}>
-        <Button
-          className="size-[50px] rounded-full"
+        <Pressable
+          className="size-[52px] rounded-full items-center justify-center active:opacity-70"
+          style={sideButtonStyle}
           onPress={() => setVoiceInputOpen(true)}
         >
-          <AudioLines className="size-[35px]" strokeWidth={1.5} />
-        </Button>
+          <AudioLines size={20} color={C.textOnInk} strokeWidth={1.6} />
+        </Pressable>
       </Animated.View>
-      <Animated.View className={'absolute'} style={voiceActiveButtonStyle}>
-        <Button
-          variant="accent"
-          className="size-[60px] rounded-full"
+
+      <Animated.View className="absolute" style={voiceActiveButtonStyle}>
+        <Pressable
+          className="size-[64px] rounded-full items-center justify-center active:opacity-80"
+          style={fabStyle}
           onPress={() => setVoiceInputOpen(true)}
         >
-          <View className="size-[25px] bg-background"></View>
-        </Button>
+          <View className="size-[22px]" style={{ backgroundColor: C.paper }} />
+        </Pressable>
       </Animated.View>
-      <Animated.View className={'absolute'} style={voiceCloseButtonStyle}>
+
+      <Animated.View className="absolute" style={voiceCloseButtonStyle}>
         <CloseButton onPress={() => setVoiceInputOpen(false)} />
       </Animated.View>
     </View>

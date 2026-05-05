@@ -6,6 +6,24 @@ import { View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
 
+import {
+  useFonts as useInterTight,
+  InterTight_400Regular,
+  InterTight_500Medium,
+  InterTight_600SemiBold,
+  InterTight_700Bold,
+} from '@expo-google-fonts/inter-tight';
+import {
+  JetBrainsMono_400Regular,
+  JetBrainsMono_500Medium,
+  JetBrainsMono_600SemiBold,
+  JetBrainsMono_700Bold,
+} from '@expo-google-fonts/jetbrains-mono';
+import {
+  InstrumentSerif_400Regular,
+  InstrumentSerif_400Regular_Italic,
+} from '@expo-google-fonts/instrument-serif';
+
 import { AddTransactionModal } from '@/components/pages/add-transaction/add-transaction-modal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CurrenciesModal } from '@/components/pages/currencies/currencies-modal';
@@ -15,6 +33,7 @@ import { NewCategoryModal } from '@/components/pages/categories/new-category-mod
 import { CategoriesModal } from '@/components/pages/categories/categories-modal';
 import { useSession } from '@/hooks/auth/useSession';
 import { useSyncWorker } from '@/hooks/sync/useSyncWorker';
+import { C } from '@/utils/theme';
 
 const queryClient = new QueryClient();
 
@@ -37,16 +56,33 @@ const AuthGate = () => {
 };
 
 export default function RootLayout() {
+  const [fontsLoaded] = useInterTight({
+    InterTight_400Regular,
+    InterTight_500Medium,
+    InterTight_600SemiBold,
+    InterTight_700Bold,
+    JetBrainsMono_400Regular,
+    JetBrainsMono_500Medium,
+    JetBrainsMono_600SemiBold,
+    JetBrainsMono_700Bold,
+    InstrumentSerif_400Regular,
+    InstrumentSerif_400Regular_Italic,
+  });
+
+  if (!fontsLoaded) {
+    return <View style={{ flex: 1, backgroundColor: C.paper }} />;
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider value={DefaultTheme}>
           <StatusBar style="dark" />
-          <View style={{ flex: 1, backgroundColor: '#C2B9A7' }}>
+          <View style={{ flex: 1, backgroundColor: C.paper }}>
             <Stack
               screenOptions={{
                 headerShown: false,
-                contentStyle: { backgroundColor: '#C2B9A7' },
+                contentStyle: { backgroundColor: C.paper },
               }}
             />
             <AuthGate />

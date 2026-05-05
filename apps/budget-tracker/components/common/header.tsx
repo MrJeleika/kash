@@ -3,6 +3,7 @@ import { Icon } from '../ui/icon';
 import { ChevronLeft, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { C, FONTS } from '@/utils/theme';
 
 interface HeaderProps {
   backButton?: boolean;
@@ -11,7 +12,26 @@ interface HeaderProps {
   centerElement?: React.ReactNode;
   actionButton?: React.ReactNode;
   isModal?: boolean;
+  variant?: 'page' | 'wordmark';
+  subtitle?: string;
 }
+
+export const KashWordmark = ({ size = 18 }: { size?: number }) => (
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: size * 0.4 }}>
+    <View style={{ width: size * 1.1, height: size * 0.18, backgroundColor: C.red }} />
+    <Text
+      style={{
+        fontFamily: FONTS.monoBold,
+        fontSize: size,
+        letterSpacing: 0.04 * size,
+        color: C.ink,
+        lineHeight: size * 1.05,
+      }}
+    >
+      KASH
+    </Text>
+  </View>
+);
 
 export const Header = ({
   backButton,
@@ -20,6 +40,8 @@ export const Header = ({
   centerElement,
   actionButton,
   isModal = false,
+  variant = 'page',
+  subtitle,
 }: HeaderProps) => {
   const insets = useSafeAreaInsets();
   const topPad = isModal ? 12 : insets.top + 4;
@@ -28,51 +50,69 @@ export const Header = ({
     <View
       style={{
         paddingTop: topPad,
-        paddingBottom: 12,
-        paddingHorizontal: 12,
-        backgroundColor: '#C2B9A7',
+        paddingBottom: 14,
+        paddingHorizontal: 20,
+        backgroundColor: C.paper,
         borderBottomWidth: 1,
-        borderBottomColor: '#B5ADA0',
+        borderBottomColor: C.rule,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}
     >
-      <View style={{ minWidth: 80, alignItems: 'flex-start' }}>
-        {backButton && (
-          <Pressable
-            className="flex flex-row items-center"
-            onPress={() => router.back()}
-            hitSlop={8}
-          >
-            <Icon icon={ChevronLeft} size={22} color="#1A1918" />
-            <Text>Back</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
+        {backButton && !closeButtonAction && variant !== 'wordmark' && (
+          <Pressable onPress={() => router.back()} hitSlop={10}>
+            <Icon icon={ChevronLeft} size={20} color={C.ink} />
           </Pressable>
         )}
         {closeButtonAction && (
           <Pressable
             onPress={closeButtonAction}
-            hitSlop={8}
-            style={({ pressed }) => ({
-              opacity: pressed ? 0.5 : 1,
-              padding: 4,
-            })}
+            hitSlop={10}
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
           >
-            <Icon icon={X} size={22} color="#1A1918" />
+            <Icon icon={X} size={20} color={C.ink} />
           </Pressable>
         )}
-      </View>
 
-      <View style={{ flex: 1, alignItems: 'center' }}>
-        {title && (
-          <Text style={{ color: '#1A1918', fontSize: 17, fontWeight: '600' }}>
+        {variant === 'wordmark' ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <KashWordmark size={15} />
+            {(subtitle || title) && (
+              <>
+                <View style={{ width: 1, height: 14, backgroundColor: C.textMuted, opacity: 0.5 }} />
+                <Text
+                  style={{
+                    fontFamily: FONTS.monoSemi,
+                    fontSize: 11,
+                    letterSpacing: 1.98,
+                    color: C.textMuted,
+                  }}
+                >
+                  {subtitle ?? title}
+                </Text>
+              </>
+            )}
+          </View>
+        ) : title ? (
+          <Text
+            style={{
+              fontFamily: FONTS.monoBold,
+              fontSize: 12,
+              letterSpacing: 2.16,
+              color: C.ink,
+              textTransform: 'uppercase',
+            }}
+          >
             {title}
           </Text>
-        )}
+        ) : null}
+
         {centerElement}
       </View>
 
-      <View style={{ minWidth: 80, alignItems: 'flex-end' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
         {actionButton}
       </View>
     </View>

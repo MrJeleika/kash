@@ -1,17 +1,26 @@
-import { cn } from '@/utils/shared';
 import { View } from 'react-native';
+import { Eyebrow } from '@/components/ui/typography';
+import { C } from '@/utils/theme';
 
 interface SettingsSectionProps {
   children: React.ReactNode;
-  className?: string;
+  label?: string;
 }
 
-export function SettingsSection({ children, className }: SettingsSectionProps) {
+export function SettingsSection({ children, label }: SettingsSectionProps) {
   return (
-    <View
-      className={cn('bg-surface-raised rounded-2xl overflow-hidden mb-4', className)}
-    >
-      {children}
+    <View className="mb-5">
+      {label && <Eyebrow className="px-6 mb-2">{label}</Eyebrow>}
+      <View
+        style={{
+          backgroundColor: C.paperHi,
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: C.rule,
+        }}
+      >
+        {children}
+      </View>
     </View>
   );
 }
