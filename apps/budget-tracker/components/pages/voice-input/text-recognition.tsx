@@ -151,6 +151,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
         style={{
           fontFamily: FONTS.monoSemi,
           fontSize: 10,
+          lineHeight: 16,
           letterSpacing: 1.4,
           color: C.textOnInkDim,
           textTransform: 'uppercase',
@@ -161,7 +162,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
       </Text>
 
       {error ? (
-        <Text style={{ color: C.red, fontSize: 13 }}>Error: {error}</Text>
+        <Text style={{ color: C.red, fontSize: 13, lineHeight: 18 }}>Error: {error}</Text>
       ) : transcript ? (
         <Text
           style={{
@@ -178,6 +179,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
           style={{
             fontFamily: FONTS.serifItalic,
             fontSize: 22,
+            lineHeight: 29,
             color: C.textOnInkDim,
           }}
         >
@@ -191,6 +193,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 1.4,
             color: C.textOnInkDim,
             textTransform: 'uppercase',
@@ -215,6 +218,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
               style={{
                 fontFamily: FONTS.monoSemi,
                 fontSize: 10,
+                lineHeight: 16,
                 letterSpacing: 1.4,
                 color: C.textOnInkDim,
                 textTransform: 'uppercase',
@@ -226,6 +230,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
               style={{
                 fontFamily: FONTS.monoSemi,
                 fontSize: 10,
+                lineHeight: 16,
                 color: C.red,
               }}
             >
@@ -246,6 +251,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
                   style={{
                     fontFamily: FONTS.sansMedium,
                     fontSize: 13,
+                    lineHeight: 18,
                     color: C.textOnInk,
                   }}
                 >
@@ -255,6 +261,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
                   style={{
                     fontFamily: FONTS.monoSemi,
                     fontSize: 14,
+                    lineHeight: 20,
                     color: C.textOnInk,
                   }}
                 >
@@ -274,6 +281,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
               style={{
                 fontFamily: FONTS.monoBold,
                 fontSize: 11,
+                lineHeight: 17,
                 letterSpacing: 1.76,
                 color: C.textOnInk,
                 textTransform: 'uppercase',
@@ -291,6 +299,7 @@ export const TextRecognition = ({ voiceInputOpen }: Props) => {
           style={{
             fontFamily: FONTS.mono,
             fontSize: 12,
+            lineHeight: 18,
             color: C.textOnInkDim,
           }}
         >

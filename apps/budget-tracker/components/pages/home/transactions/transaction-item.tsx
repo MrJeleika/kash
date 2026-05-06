@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import React from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { CategoryIcon } from '@/components/common/category-icon';
 import { C, FONTS } from '@/utils/theme';
 
 interface TransactionItemProps {
@@ -43,8 +44,9 @@ export const TransactionItem = ({
     Math.abs(transaction.amountInBaseCurrency).toFixed(2)
   );
   const title = transaction.merchant || transaction.categoryName;
-  const subtitle = `${transaction.categoryName} · ${formatTime(transaction.date)}`;
-  const badgeLabel = transaction.categoryName.slice(0, 4).toUpperCase();
+  const note = transaction.note?.trim();
+  const time = formatTime(transaction.updatedAt);
+  const subtitle = note ? `${note} · ${time}` : time;
 
   const handlePress = () => {
     setTransactionToEdit({
@@ -80,38 +82,7 @@ export const TransactionItem = ({
           ]}
           className="flex-row items-center gap-3 px-6 py-3"
         >
-          <View
-            className="h-8 w-8 items-center justify-center"
-            style={{
-              backgroundColor: isExpense ? C.paperHi : C.greenDim,
-              borderWidth: 1,
-              borderColor: C.rule,
-            }}
-          >
-            {isExpense ? (
-              <Text
-                style={{
-                  fontFamily: FONTS.monoBold,
-                  fontSize: 9,
-                  color: C.text,
-                  letterSpacing: 0.4,
-                }}
-              >
-                {badgeLabel}
-              </Text>
-            ) : (
-              <Text
-                style={{
-                  color: C.green,
-                  fontWeight: '700',
-                  fontSize: 14,
-                  lineHeight: 16,
-                }}
-              >
-                ↘
-              </Text>
-            )}
-          </View>
+          <CategoryIcon category={category} size={36} />
 
           <View className="flex-1">
             <Text
@@ -119,6 +90,7 @@ export const TransactionItem = ({
               style={{
                 fontFamily: FONTS.sansMedium,
                 fontSize: 14,
+                lineHeight: 20,
                 color: C.text,
               }}
             >
@@ -128,6 +100,7 @@ export const TransactionItem = ({
               numberOfLines={1}
               style={{
                 fontSize: 11,
+                lineHeight: 17,
                 color: C.textMuted,
                 marginTop: 2,
               }}
@@ -141,26 +114,31 @@ export const TransactionItem = ({
               style={{
                 fontFamily: FONTS.monoSemi,
                 fontSize: 14,
+                lineHeight: 20,
                 color: isExpense ? C.text : C.green,
               }}
             >
               {sign}
               {amountStr}
+              {transaction.baseCurrency
+                ? ` ${transaction.baseCurrency.toUpperCase()}`
+                : ''}
             </Text>
             <Text
               style={{
                 fontFamily: FONTS.mono,
                 fontSize: 9,
+                lineHeight: 15,
                 color: C.textMute,
                 letterSpacing: 1,
                 marginTop: 2,
               }}
             >
-              {(isDifferentCurrency
+              {isDifferentCurrency
                 ? `${sign}${formatNumberWithSpaces(
                     Math.abs(transaction.amount).toFixed(2)
                   )} ${transaction.currency?.toUpperCase()}`
-                : transaction.baseCurrency?.toUpperCase()) ?? ''}
+                : ' '}
             </Text>
           </View>
         </Animated.View>

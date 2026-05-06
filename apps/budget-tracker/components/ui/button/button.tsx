@@ -72,6 +72,7 @@ function Button({
             fontFamily: FONTS.monoBold,
             color: v.fg,
             fontSize: 11,
+            lineHeight: 17,
             letterSpacing: 1.76,
             textTransform: 'uppercase',
           }}

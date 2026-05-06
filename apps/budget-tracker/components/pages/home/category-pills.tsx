@@ -54,15 +54,15 @@ export const CategoryPills = ({ selected, onSelect }: Props) => {
             <View
               className="h-12 w-12 rounded-full items-center justify-center"
               style={{
-                backgroundColor: active ? C.red : 'transparent',
-                borderWidth: active ? 0 : 1,
-                borderColor: C.rule,
+                backgroundColor: active ? c.color : 'transparent',
+                borderWidth: 1,
+                borderColor: active ? c.color : c.color,
               }}
             >
               {active ? (
                 <Icon icon={Check} size={20} color={C.textOnInk} />
               ) : (
-                <Icon icon={IconComp} size={20} color={C.ink} />
+                <Icon icon={IconComp} size={20} color={c.color} />
               )}
             </View>
             <Text
@@ -70,6 +70,7 @@ export const CategoryPills = ({ selected, onSelect }: Props) => {
               style={{
                 fontFamily: FONTS.monoSemi,
                 fontSize: 9,
+                lineHeight: 15,
                 letterSpacing: 1.3,
                 color: active ? C.ink : C.textMuted,
                 textTransform: 'uppercase',
@@ -98,6 +99,7 @@ export const CategoryPills = ({ selected, onSelect }: Props) => {
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 9,
+            lineHeight: 15,
             letterSpacing: 1.3,
             color: C.textMuted,
             textTransform: 'uppercase',

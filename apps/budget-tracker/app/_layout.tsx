@@ -31,6 +31,7 @@ import { PeriodSelectorModal } from '@/components/pages/home/period-selector/per
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NewCategoryModal } from '@/components/pages/categories/new-category-modal';
 import { CategoriesModal } from '@/components/pages/categories/categories-modal';
+import { DateSelectSheet } from '@/components/pages/add-transaction/date-select-sheet';
 import { useSession } from '@/hooks/auth/useSession';
 import { useSyncWorker } from '@/hooks/sync/useSyncWorker';
 import { C } from '@/utils/theme';
@@ -91,6 +92,7 @@ export default function RootLayout() {
             <PeriodSelectorModal />
             <CategoriesModal />
             <NewCategoryModal />
+            <DateSelectSheet />
           </View>
         </ThemeProvider>
       </QueryClientProvider>

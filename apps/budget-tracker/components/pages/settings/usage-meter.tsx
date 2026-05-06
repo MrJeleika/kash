@@ -29,6 +29,7 @@ export function UsageMeter({
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 11,
+            lineHeight: 17,
             color: C.text,
           }}
         >
@@ -45,6 +46,7 @@ export function UsageMeter({
         style={{
           fontFamily: FONTS.mono,
           fontSize: 11,
+          lineHeight: 17,
           color: C.textMuted,
         }}
       >

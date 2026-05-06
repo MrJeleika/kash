@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CloseButton } from '@/components/common/close-button';
 import { useOcrReceipt } from '@/hooks/photo/useOcrReceipt';
 import { captureReceipt } from '@/utils/photo';
@@ -38,6 +39,7 @@ export function ActionButtons() {
     setTransactionDraft,
   } = useModalsStore();
   const ocr = useOcrReceipt();
+  const insets = useSafeAreaInsets();
 
   const scanTextButtonScale = useSharedValue(1);
   const addTransactionButtonScale = useSharedValue(1);
@@ -124,7 +126,8 @@ export function ActionButtons() {
 
   return (
     <View
-      className="absolute bottom-7 left-0 right-0 flex flex-row gap-4 justify-center items-center z-50"
+      className="absolute left-0 right-0 flex flex-row gap-4 justify-center items-center z-50"
+      style={{ bottom: insets.bottom + 4 }}
       pointerEvents="box-none"
     >
       <Animated.View style={scanTextButtonStyle}>

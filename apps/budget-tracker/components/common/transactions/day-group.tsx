@@ -32,6 +32,7 @@ export const DayGroup = ({
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 1.8,
             color: C.text,
             textTransform: 'uppercase',
@@ -43,6 +44,7 @@ export const DayGroup = ({
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 1,
             color: C.textMuted,
           }}

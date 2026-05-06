@@ -129,6 +129,7 @@ export const VoiceInput = () => {
           style={{
             fontFamily: FONTS.monoBold,
             fontSize: 12,
+            lineHeight: 18,
             letterSpacing: 2.16,
             color: C.textOnInk,
             textTransform: 'uppercase',
@@ -140,6 +141,7 @@ export const VoiceInput = () => {
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 1.4,
             color: C.red,
           }}
@@ -156,6 +158,7 @@ export const VoiceInput = () => {
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 2,
             color: C.textOnInkDim,
             textTransform: 'uppercase',

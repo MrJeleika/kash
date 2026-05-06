@@ -29,6 +29,7 @@ export function AddTransactionModal() {
     transactionToEdit,
     transactionDraft,
     setTransactionDraft,
+    openDateSheet,
   } = useModalsStore();
 
   const seed = transactionToEdit ?? transactionDraft;
@@ -145,6 +146,7 @@ export function AddTransactionModal() {
           style={{
             fontFamily: FONTS.monoBold,
             fontSize: 12,
+            lineHeight: 18,
             letterSpacing: 2.16,
             color: C.ink,
             textTransform: 'uppercase',
@@ -169,6 +171,7 @@ export function AddTransactionModal() {
               style={{
                 fontFamily: FONTS.monoMedium,
                 fontSize: amountTooLong ? 22 : 26,
+                lineHeight: Math.round((amountTooLong ? 22 : 26) * 1.2),
                 color: C.textMute,
               }}
             >
@@ -178,9 +181,13 @@ export function AddTransactionModal() {
               style={{
                 fontFamily: FONTS.monoBold,
                 fontSize: amountTooLong ? 48 : 64,
+                lineHeight: Math.round((amountTooLong ? 48 : 64) * 1.2),
                 color: C.ink,
-                lineHeight: amountTooLong ? 50 : 66,
                 letterSpacing: -2,
+              }}
+              spaceStyle={{
+                fontSize: amountTooLong ? 18 : 24,
+                letterSpacing: 0,
               }}
               isNumber
             >
@@ -193,6 +200,7 @@ export function AddTransactionModal() {
               style={{
                 fontFamily: FONTS.mono,
                 fontSize: 11,
+                lineHeight: 17,
                 color: C.textMuted,
                 letterSpacing: 0.5,
               }}
@@ -227,12 +235,18 @@ export function AddTransactionModal() {
                 flex: 1,
                 fontFamily: FONTS.sans,
                 fontSize: 13,
+                lineHeight: 18,
                 color: C.text,
                 padding: 0,
               }}
             />
           </View>
-          <DateSelector date={date} />
+          <DateSelector
+            date={date}
+            onPress={() =>
+              openDateSheet({ value: date, onConfirm: setDate })
+            }
+          />
           <CurrencyBadge currency={currency} setCurrency={setCurrency} />
         </View>
 
@@ -255,7 +269,7 @@ export function AddTransactionModal() {
         </View>
 
         {/* Save button */}
-        <View className="px-4 pt-1 pb-2">
+        <View className="px-4 pt-3 pb-5">
           <Pressable
             onPress={handleSubmit}
             disabled={!categoryName || amount === '0'}
@@ -269,6 +283,7 @@ export function AddTransactionModal() {
               style={{
                 fontFamily: FONTS.monoBold,
                 fontSize: 12,
+                lineHeight: 18,
                 letterSpacing: 2.64,
                 color: C.textOnInk,
                 textTransform: 'uppercase',

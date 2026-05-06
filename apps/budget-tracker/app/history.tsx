@@ -61,6 +61,7 @@ export default function HistoryScreen() {
               flex: 1,
               fontFamily: FONTS.sans,
               fontSize: 13,
+              lineHeight: 18,
               color: C.text,
               padding: 0,
             }}
@@ -90,6 +91,7 @@ export default function HistoryScreen() {
                   style={{
                     fontFamily: FONTS.monoSemi,
                     fontSize: 10,
+                    lineHeight: 16,
                     letterSpacing: 1.4,
                     color: active ? C.ink : C.textMuted,
                     textTransform: 'uppercase',
@@ -106,7 +108,7 @@ export default function HistoryScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         {grouped.length === 0 ? (
           <View className="items-center py-20">
-            <Text style={{ color: C.textMuted, fontSize: 13 }}>
+            <Text style={{ color: C.textMuted, fontSize: 13, lineHeight: 18 }}>
               No transactions match.
             </Text>
           </View>

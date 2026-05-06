@@ -12,6 +12,7 @@ export const Eyebrow = ({ children, style, ...rest }: EyebrowProps) => (
       {
         fontFamily: FONTS.monoSemi,
         fontSize: 10,
+        lineHeight: 16,
         letterSpacing: 1.4,
         color: C.textMuted,
         textTransform: 'uppercase',
@@ -46,6 +47,7 @@ export const MonoLabel = ({
       {
         fontFamily: bold ? FONTS.monoBold : FONTS.monoSemi,
         fontSize: size,
+        lineHeight: Math.round(size * 1.2),
         letterSpacing,
         color,
         textTransform: 'uppercase',
@@ -86,6 +88,7 @@ export const HeroAmount = ({
         style={{
           fontFamily: FONTS.serif,
           fontSize: size * 0.7,
+          lineHeight: Math.round(size * 0.7 * 1.2),
           color: C.textMuted,
         }}
       >
@@ -96,7 +99,7 @@ export const HeroAmount = ({
       style={{
         fontFamily: FONTS.serif,
         fontSize: size,
-        lineHeight: size,
+        lineHeight: size * 1.1,
         color: C.ink,
         letterSpacing: -size * 0.03,
       }}
@@ -107,6 +110,7 @@ export const HeroAmount = ({
       style={{
         fontFamily: FONTS.monoSemi,
         fontSize: suffixSize,
+        lineHeight: Math.round(suffixSize * 1.2),
         color: C.textMuted,
       }}
     >

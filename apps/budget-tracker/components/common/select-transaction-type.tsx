@@ -24,6 +24,7 @@ export const SelectTransactionType = ({
           style={{
             fontFamily: active ? FONTS.monoBold : FONTS.monoSemi,
             fontSize: 11,
+            lineHeight: 17,
             letterSpacing: 1.98,
             color: active ? C.textOnInk : C.textMuted,
             textTransform: 'uppercase',

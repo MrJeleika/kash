@@ -12,8 +12,6 @@ import {
   Sun,
   Mic,
   Upload,
-  Heart,
-  Mail,
   Lock,
   FileText,
   Trash2,
@@ -36,7 +34,11 @@ const handleSignOut = () => {
       text: 'Sign out',
       style: 'destructive',
       onPress: async () => {
-        await supabase.auth.signOut();
+        try {
+          await supabase.auth.signOut({ scope: 'local' });
+        } catch (err) {
+          console.warn('[signOut] failed, forcing navigation anyway:', err);
+        }
         router.replace('/');
       },
     },
@@ -82,6 +84,7 @@ export default function SettingsScreen() {
             style={{
               fontFamily: FONTS.mono,
               fontSize: 10,
+              lineHeight: 16,
               letterSpacing: 1.4,
               color: C.textMuted,
             }}
@@ -117,12 +120,15 @@ export default function SettingsScreen() {
           </SettingsSection>
 
           <SettingsSection label="Data">
-            <SettingsItem icon={Upload} label="Export (CSV)" last />
+            <SettingsItem
+              icon={Upload}
+              label="Export (CSV)"
+              value="SOON"
+              last
+            />
           </SettingsSection>
 
           <SettingsSection label="About">
-            <SettingsItem icon={Heart} label="Review in App Store" />
-            <SettingsItem icon={Mail} label="Help & support" />
             <SettingsItem icon={Lock} label="Privacy policy" />
             <SettingsItem icon={FileText} label="Terms of use" last />
           </SettingsSection>

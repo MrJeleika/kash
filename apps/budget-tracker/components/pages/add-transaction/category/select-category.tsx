@@ -53,15 +53,15 @@ const SelectCategory = ({
               <View
                 className="h-12 w-12 rounded-full items-center justify-center"
                 style={{
-                  backgroundColor: active ? C.red : 'transparent',
-                  borderWidth: active ? 0 : 1,
-                  borderColor: C.rule,
+                  backgroundColor: active ? c.color : 'transparent',
+                  borderWidth: 1,
+                  borderColor: c.color,
                 }}
               >
                 {active ? (
                   <Icon icon={Check} size={20} color={C.textOnInk} strokeWidth={2} />
                 ) : (
-                  <Icon icon={IconComp} size={20} color={C.ink} strokeWidth={1.6} />
+                  <Icon icon={IconComp} size={20} color={c.color} strokeWidth={1.6} />
                 )}
               </View>
               <Text
@@ -69,6 +69,7 @@ const SelectCategory = ({
                 style={{
                   fontFamily: FONTS.monoSemi,
                   fontSize: 9,
+                  lineHeight: 15,
                   letterSpacing: 1.3,
                   color: active ? C.ink : C.textMuted,
                   textTransform: 'uppercase',

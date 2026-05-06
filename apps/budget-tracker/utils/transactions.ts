@@ -10,7 +10,8 @@ export interface GroupedTransaction {
 
 /**
  * Groups transactions by calendar day, totals each day, and sorts everything
- * newest-first. Inner transactions within a day are also sorted newest-first.
+ * newest-first. Within a day, rows are ordered by `updatedAt` desc (date is
+ * day-only, so it can't break ties).
  */
 export const groupTransactionsByDate = (
   transactions: Transaction[]
@@ -26,7 +27,8 @@ export const groupTransactionsByDate = (
   const groups: GroupedTransaction[] = Array.from(byDay.entries()).map(
     ([dayKey, items]) => {
       const sorted = [...items].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       );
       return {
         date: formatLongDate(new Date(dayKey)),

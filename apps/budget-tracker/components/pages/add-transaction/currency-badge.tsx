@@ -36,6 +36,7 @@ export function CurrencyBadge({ currency, setCurrency }: CurrencyBadgeProps) {
         style={{
           fontFamily: FONTS.monoSemi,
           fontSize: 12,
+          lineHeight: 18,
           letterSpacing: 1,
           color: C.text,
         }}

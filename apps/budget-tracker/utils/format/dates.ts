@@ -24,6 +24,21 @@ export const formatLongDate = (date: Date): string =>
     year: 'numeric',
   });
 
+/** "YYYY-MM-DD" for a Date, in the user's local timezone (no UTC drift). */
+export const toLocalDateKey = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+/** Parse "YYYY-MM-DD" as a local-midnight Date (avoids UTC interpretation). */
+export const fromLocalDateKey = (s: string): Date => {
+  const [y, m, d] = s.split('-').map(Number);
+  if (!y || !m || !d) return startOfDay(new Date());
+  return new Date(y, m - 1, d);
+};
+
 // ---------- Period boundaries ----------
 
 export const startOfDay = (date: Date): Date => {

@@ -24,6 +24,7 @@ export function ProfileCard({ email, tier = 'Free tier', showUpgrade = true }: P
           style={{
             fontFamily: FONTS.monoBold,
             fontSize: 20,
+            lineHeight: 26,
             color: C.textOnInk,
             letterSpacing: 1,
           }}
@@ -36,6 +37,7 @@ export function ProfileCard({ email, tier = 'Free tier', showUpgrade = true }: P
           style={{
             fontFamily: FONTS.sansSemi,
             fontSize: 16,
+            lineHeight: 22,
             color: C.text,
           }}
         >
@@ -46,6 +48,7 @@ export function ProfileCard({ email, tier = 'Free tier', showUpgrade = true }: P
           style={{
             fontFamily: FONTS.mono,
             fontSize: 11,
+            lineHeight: 17,
             color: C.textMuted,
           }}
         >
@@ -58,6 +61,7 @@ export function ProfileCard({ email, tier = 'Free tier', showUpgrade = true }: P
             style={{
               fontFamily: FONTS.monoBold,
               fontSize: 9,
+              lineHeight: 15,
               letterSpacing: 1.2,
               color: C.redDeep,
             }}

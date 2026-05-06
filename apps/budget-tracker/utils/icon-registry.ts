@@ -354,6 +354,11 @@ export const ICON_REGISTRY: Record<string, LucideIcon> = {
   House,
 };
 
+const NAME_BY_ICON = new Map<LucideIcon, string>();
+for (const [name, component] of Object.entries(ICON_REGISTRY)) {
+  if (!NAME_BY_ICON.has(component)) NAME_BY_ICON.set(component, name);
+}
+
 /**
  * Get a LucideIcon component by its name
  * @param iconName The name of the icon component (e.g., "CircleSlash", "ForkKnife")
@@ -369,8 +374,5 @@ export function getIconByName(iconName: string): LucideIcon {
  * @returns The name of the icon or "CircleSlash" as fallback
  */
 export function getIconName(icon: LucideIcon): string {
-  const entry = Object.entries(ICON_REGISTRY).find(
-    ([, component]) => component === icon
-  );
-  return entry ? entry[0] : 'CircleSlash';
+  return NAME_BY_ICON.get(icon) ?? 'CircleSlash';
 }

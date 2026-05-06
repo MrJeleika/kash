@@ -47,6 +47,7 @@ export function SettingsItem({
         style={{
           fontFamily: FONTS.sansMedium,
           fontSize: 14,
+          lineHeight: 20,
           color: fg,
         }}
       >
@@ -58,6 +59,7 @@ export function SettingsItem({
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 11,
+            lineHeight: 17,
             letterSpacing: 1,
             color: C.textMuted,
           }}

@@ -5,8 +5,11 @@ import { makeRedirectUri } from 'expo-auth-session';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import Constants from 'expo-constants';
 import { C, FONTS } from '@/utils/theme';
 import { KashWordmark } from '@/components/common/header';
+
+const APP_VERSION = Constants.expoConfig?.version ?? '0.0.0';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -16,8 +19,15 @@ const redirectTo = makeRedirectUri({
   path: 'auth/callback',
 });
 
+/** URLs we've already attempted to finalize, deduped across AuthScreen remounts. */
+const handledOAuthUrls = new Set<string>();
+
 function looksLikeOAuthReturn(url: string) {
   return /[?&#](code|error|access_token)=/.test(url);
+}
+
+function isStaleVerifierError(message: string) {
+  return /pkce code verifier not found/i.test(message);
 }
 
 function parseFragment(url: string): URLSearchParams {
@@ -37,11 +47,12 @@ export default function AuthScreen() {
         console.log('[oauth] skipping — not an oauth return');
         return;
       }
-      if (oauthHandledRef.current) {
+      if (oauthHandledRef.current || handledOAuthUrls.has(url)) {
         console.log('[oauth] skipping — already handled');
         return;
       }
       oauthHandledRef.current = true;
+      handledOAuthUrls.add(url);
 
       WebBrowser.dismissBrowser();
 
@@ -53,7 +64,9 @@ export default function AuthScreen() {
         if (exchangeError) {
           console.log('[oauth] exchange failed:', exchangeError.message);
           oauthHandledRef.current = false;
-          setError(exchangeError.message);
+          if (!isStaleVerifierError(exchangeError.message)) {
+            setError(exchangeError.message);
+          }
           setLoading(false);
           return;
         }
@@ -154,33 +167,22 @@ export default function AuthScreen() {
           style={{
             fontFamily: FONTS.mono,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 1.8,
             color: C.textMuted,
           }}
         >
-          v2.4.0
+          v{APP_VERSION}
         </Text>
       </View>
 
       {/* Editorial headline */}
       <View>
         <Text
-          className="mb-4"
-          style={{
-            fontFamily: FONTS.monoSemi,
-            fontSize: 10,
-            letterSpacing: 1.4,
-            color: C.textMuted,
-            textTransform: 'uppercase',
-          }}
-        >
-          —— Access ledger · 001
-        </Text>
-        <Text
           style={{
             fontFamily: FONTS.serif,
             fontSize: 56,
-            lineHeight: 56 * 0.95,
+            lineHeight: 62,
             color: C.ink,
             letterSpacing: -1.1,
           }}
@@ -208,26 +210,30 @@ export default function AuthScreen() {
         <Pressable
           onPress={handleGoogleSignIn}
           disabled={loading}
-          className="h-14 flex-row items-center justify-center gap-2.5"
-          style={({ pressed }) => ({
-            backgroundColor: C.paperHi,
-            borderWidth: 1,
-            borderColor: C.rule,
-            borderRadius: 4,
-            opacity: pressed ? 0.85 : 1,
-          })}
+          className="h-14 flex-row items-center justify-center gap-3 active:opacity-85"
+          style={{ backgroundColor: C.ink, borderRadius: 4 }}
         >
           {loading ? (
-            <ActivityIndicator color={C.ink} size="small" />
+            <ActivityIndicator color={C.textOnInk} size="small" />
           ) : (
             <>
-              <Text style={{ fontSize: 14 }}>𝙶</Text>
+              <Text
+                style={{
+                  fontFamily: FONTS.sansBold,
+                  fontSize: 16,
+                  lineHeight: 22,
+                  color: C.textOnInk,
+                }}
+              >
+                G
+              </Text>
               <Text
                 style={{
                   fontFamily: FONTS.monoSemi,
                   fontSize: 12,
+                  lineHeight: 18,
                   letterSpacing: 1.92,
-                  color: C.ink,
+                  color: C.textOnInk,
                 }}
               >
                 CONTINUE WITH GOOGLE
@@ -241,6 +247,7 @@ export default function AuthScreen() {
             style={{
               fontFamily: FONTS.mono,
               fontSize: 11,
+              lineHeight: 17,
               color: C.red,
               textAlign: 'center',
             }}

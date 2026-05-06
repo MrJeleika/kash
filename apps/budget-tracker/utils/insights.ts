@@ -22,6 +22,7 @@ export interface MerchantBucket {
 }
 
 export interface InsightsResult {
+  total: number;
   totalExpense: number;
   totalIncome: number;
   net: number;
@@ -39,7 +40,8 @@ const isInPeriod = (t: Transaction, p: PeriodConfig) =>
 export const computeInsights = (
   transactions: Transaction[],
   period: PeriodConfig,
-  resolveCategoryColor: (name: string) => string | undefined
+  resolveCategoryColor: (name: string) => string | undefined,
+  type: 'expense' | 'income' = 'expense'
 ): InsightsResult => {
   const inPeriod = transactions.filter((t) => isInPeriod(t, period));
 
@@ -49,27 +51,28 @@ export const computeInsights = (
   const totalIncome = inPeriod
     .filter((t) => t.type === 'income')
     .reduce((s, t) => s + Math.abs(t.amountInBaseCurrency), 0);
+  const total = type === 'expense' ? totalExpense : totalIncome;
 
   const catTotals = new Map<string, number>();
   for (const t of inPeriod) {
-    if (t.type !== 'expense') continue;
+    if (t.type !== type) continue;
     catTotals.set(
       t.categoryName,
       (catTotals.get(t.categoryName) ?? 0) + Math.abs(t.amountInBaseCurrency)
     );
   }
   const byCategory: CategoryBreakdown[] = Array.from(catTotals.entries())
-    .map(([name, total]) => ({
+    .map(([name, catTotal]) => ({
       name,
       color: resolveCategoryColor(name) ?? '#7A7469',
-      total,
-      share: totalExpense > 0 ? total / totalExpense : 0,
+      total: catTotal,
+      share: total > 0 ? catTotal / total : 0,
     }))
     .sort((a, b) => b.total - a.total);
 
   const dayTotals = new Map<string, number>();
   for (const t of inPeriod) {
-    if (t.type !== 'expense') continue;
+    if (t.type !== type) continue;
     const day = t.date.slice(0, 10);
     dayTotals.set(
       day,
@@ -77,12 +80,12 @@ export const computeInsights = (
     );
   }
   const byDay: DailyBucket[] = Array.from(dayTotals.entries())
-    .map(([date, total]) => ({ date, total }))
+    .map(([date, dayTotal]) => ({ date, total: dayTotal }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   const merchantTotals = new Map<string, MerchantBucket>();
   for (const t of inPeriod) {
-    if (t.type !== 'expense') continue;
+    if (t.type !== type) continue;
     const key = (t.merchant || t.categoryName).trim();
     const cur = merchantTotals.get(key) ?? { name: key, total: 0, count: 0 };
     cur.total += Math.abs(t.amountInBaseCurrency);
@@ -94,6 +97,7 @@ export const computeInsights = (
     .slice(0, TOP_MERCHANTS_LIMIT);
 
   return {
+    total,
     totalExpense,
     totalIncome,
     net: totalIncome - totalExpense,

@@ -1,6 +1,7 @@
 import { Calendar } from 'lucide-react-native';
 import { Pressable, Text } from 'react-native';
 import { Icon } from '@/components/ui/icon';
+import { fromLocalDateKey } from '@/utils/format/dates';
 import { C, FONTS } from '@/utils/theme';
 
 interface DateSelectorProps {
@@ -10,7 +11,7 @@ interface DateSelectorProps {
 
 export function DateSelector({ date, onPress }: DateSelectorProps) {
   const formatDate = (dateStr: string) => {
-    const dateObj = new Date(dateStr);
+    const dateObj = fromLocalDateKey(dateStr);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     dateObj.setHours(0, 0, 0, 0);
@@ -40,6 +41,7 @@ export function DateSelector({ date, onPress }: DateSelectorProps) {
         style={{
           fontFamily: FONTS.monoSemi,
           fontSize: 12,
+          lineHeight: 18,
           letterSpacing: 0.5,
           color: C.text,
         }}

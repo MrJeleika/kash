@@ -84,6 +84,7 @@ export const CategoryDonut = ({
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 9,
+            lineHeight: 15,
             letterSpacing: 1.4,
             color: C.textMuted,
             textAlign: 'center',
@@ -96,6 +97,7 @@ export const CategoryDonut = ({
           style={{
             fontFamily: FONTS.monoBold,
             fontSize: 22,
+            lineHeight: 29,
             color: C.ink,
             textAlign: 'center',
             marginTop: 2,
@@ -107,6 +109,7 @@ export const CategoryDonut = ({
           style={{
             fontFamily: FONTS.mono,
             fontSize: 9,
+            lineHeight: 15,
             letterSpacing: 1.2,
             color: C.textMuted,
             textAlign: 'center',
@@ -134,6 +137,7 @@ export const CategoryDonut = ({
                 style={{
                   fontFamily: FONTS.sansMedium,
                   fontSize: 13,
+                  lineHeight: 18,
                   color: C.text,
                 }}
               >
@@ -144,6 +148,7 @@ export const CategoryDonut = ({
               style={{
                 fontFamily: FONTS.monoSemi,
                 fontSize: 12,
+                lineHeight: 18,
                 color: C.textMuted,
               }}
             >

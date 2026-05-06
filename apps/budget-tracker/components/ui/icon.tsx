@@ -7,7 +7,10 @@ type IconProps = LucideProps & {
   icon: LucideIcon;
 };
 
+const interopRegistered = new WeakSet<LucideIcon>();
+
 export function iconWithClassName(icon: LucideIcon) {
+  if (interopRegistered.has(icon)) return;
   cssInterop(icon, {
     className: {
       target: 'style',
@@ -19,6 +22,7 @@ export function iconWithClassName(icon: LucideIcon) {
       },
     },
   });
+  interopRegistered.add(icon);
 }
 
 export const Icon = ({ icon: LucideIcon, className, ...props }: IconProps) => {

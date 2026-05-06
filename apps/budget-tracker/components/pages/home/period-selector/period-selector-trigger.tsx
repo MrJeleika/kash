@@ -23,6 +23,7 @@ export const PeriodSelectorTrigger = () => {
         style={{
           fontFamily: FONTS.monoSemi,
           fontSize: 10,
+          lineHeight: 16,
           letterSpacing: 1,
           color: C.text,
           textTransform: 'uppercase',

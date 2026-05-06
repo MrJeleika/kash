@@ -36,6 +36,7 @@ export const KeyboardButton = ({
           style={{
             fontFamily: FONTS.monoMedium,
             fontSize: 22,
+            lineHeight: 29,
             color: C.ink,
           }}
         >

@@ -14,6 +14,7 @@ interface AnimatedTextProps extends Omit<TextProps, 'children'> {
   suffix?: string;
   className?: string;
   isNumber?: boolean;
+  spaceStyle?: TextProps['style'];
 }
 
 export function AnimatedText({
@@ -22,6 +23,7 @@ export function AnimatedText({
   className,
   style,
   isNumber = false,
+  spaceStyle,
   ...textProps
 }: AnimatedTextProps) {
   const displayText = useMemo(
@@ -37,6 +39,7 @@ export function AnimatedText({
             key={`${char}-${index}-${displayText.length}`}
             char={char}
             style={style}
+            spaceStyle={spaceStyle}
             className={className}
             textProps={textProps}
           />
@@ -65,6 +68,7 @@ export function AnimatedText({
 interface AnimatedCharProps {
   char: string;
   style?: TextProps['style'];
+  spaceStyle?: TextProps['style'];
   className?: string;
   textProps: Omit<TextProps, 'children'>;
 }
@@ -72,13 +76,18 @@ interface AnimatedCharProps {
 function AnimatedChar({
   char,
   style,
+  spaceStyle,
   className,
   textProps,
 }: AnimatedCharProps) {
   // Render spaces as regular text to avoid spacing issues
   if (char === ' ') {
     return (
-      <Text style={style} className={cn(className)} {...textProps}>
+      <Text
+        style={[style, spaceStyle]}
+        className={cn(className)}
+        {...textProps}
+      >
         {char}
       </Text>
     );

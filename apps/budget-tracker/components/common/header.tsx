@@ -23,9 +23,9 @@ export const KashWordmark = ({ size = 18 }: { size?: number }) => (
       style={{
         fontFamily: FONTS.monoBold,
         fontSize: size,
+        lineHeight: Math.round(size * 1.2),
         letterSpacing: 0.04 * size,
         color: C.ink,
-        lineHeight: size * 1.05,
       }}
     >
       KASH
@@ -86,6 +86,7 @@ export const Header = ({
                   style={{
                     fontFamily: FONTS.monoSemi,
                     fontSize: 11,
+                    lineHeight: 17,
                     letterSpacing: 1.98,
                     color: C.textMuted,
                   }}
@@ -100,6 +101,7 @@ export const Header = ({
             style={{
               fontFamily: FONTS.monoBold,
               fontSize: 12,
+              lineHeight: 18,
               letterSpacing: 2.16,
               color: C.ink,
               textTransform: 'uppercase',

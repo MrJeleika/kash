@@ -46,6 +46,7 @@ export function SettingsToggle({
           style={{
             fontFamily: FONTS.sansMedium,
             fontSize: 14,
+            lineHeight: 20,
             color: C.text,
           }}
         >
@@ -55,6 +56,7 @@ export function SettingsToggle({
           <Text
             style={{
               fontSize: 11,
+              lineHeight: 17,
               color: C.textMuted,
               marginTop: 2,
             }}

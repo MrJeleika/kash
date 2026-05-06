@@ -171,12 +171,32 @@ import {
   Folder,
   Archive,
   MapIcon,
+  ForkKnife,
+  House,
 } from 'lucide-react-native';
 
 export const CATEGORY_ICONS = [
   {
+    category: 'Common',
+    icons: [
+      { icon: CircleSlash, name: 'Uncategorized' },
+      { icon: House, name: 'House' },
+      { icon: RefreshCcw, name: 'Subscription' },
+      { icon: ShoppingBag, name: 'Shopping Bag' },
+      { icon: ShoppingBasket, name: 'Groceries' },
+      { icon: Popcorn, name: 'Popcorn' },
+      { icon: Dumbbell, name: 'Dumbbell' },
+      { icon: ActivityIcon, name: 'Health' },
+      { icon: Car, name: 'Car' },
+      { icon: GraduationCap, name: 'Education' },
+      { icon: Plane, name: 'Plane' },
+      { icon: Egg, name: 'Egg' },
+    ],
+  },
+  {
     category: 'Food & Drink',
     icons: [
+      { icon: ForkKnife, name: 'Fork & Knife' },
       { icon: Coffee, name: 'Coffee' },
       { icon: Wine, name: 'Wine' },
       { icon: Beer, name: 'Beer' },
@@ -192,7 +212,6 @@ export const CATEGORY_ICONS = [
       { icon: CupSoda, name: 'Soda' },
       { icon: Milk, name: 'Milk' },
       { icon: Wheat, name: 'Wheat' },
-      { icon: Egg, name: 'Egg' },
     ],
   },
   {

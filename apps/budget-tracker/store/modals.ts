@@ -34,6 +34,15 @@ interface ModalsState {
   setCategoryToEdit: (category: Category | null) => void;
   addCategoryModalOpen: boolean;
   setAddCategoryModalOpen: (open: boolean) => void;
+
+  dateSheetOpen: boolean;
+  dateSheetValue: string;
+  dateSheetOnConfirm: ((next: string) => void) | null;
+  openDateSheet: (opts: {
+    value: string;
+    onConfirm: (next: string) => void;
+  }) => void;
+  closeDateSheet: () => void;
 }
 
 export const useModalsStore = create<ModalsState>((set) => ({
@@ -64,4 +73,16 @@ export const useModalsStore = create<ModalsState>((set) => ({
 
   categoryToEdit: null,
   setCategoryToEdit: (category) => set({ categoryToEdit: category }),
+
+  dateSheetOpen: false,
+  dateSheetValue: '',
+  dateSheetOnConfirm: null,
+  openDateSheet: ({ value, onConfirm }) =>
+    set({
+      dateSheetOpen: true,
+      dateSheetValue: value,
+      dateSheetOnConfirm: onConfirm,
+    }),
+  closeDateSheet: () =>
+    set({ dateSheetOpen: false, dateSheetOnConfirm: null }),
 }));

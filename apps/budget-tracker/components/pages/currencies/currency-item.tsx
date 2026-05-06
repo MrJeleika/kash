@@ -49,6 +49,7 @@ export const CurrencyItem = memo(
             style={{
               fontFamily: FONTS.monoBold,
               fontSize: 10,
+              lineHeight: 16,
               color: C.ink,
               letterSpacing: 0.5,
             }}
@@ -62,6 +63,7 @@ export const CurrencyItem = memo(
             style={{
               fontFamily: FONTS.monoBold,
               fontSize: 12,
+              lineHeight: 18,
               letterSpacing: 1.68,
               color: C.ink,
             }}
@@ -74,6 +76,7 @@ export const CurrencyItem = memo(
             style={{
               fontFamily: FONTS.sansMedium,
               fontSize: 13,
+              lineHeight: 18,
               color: C.text,
             }}
           >
@@ -85,6 +88,7 @@ export const CurrencyItem = memo(
                 style={{
                   fontFamily: FONTS.monoBold,
                   fontSize: 8,
+                  lineHeight: 14,
                   letterSpacing: 1.12,
                   color: C.textOnInk,
                 }}

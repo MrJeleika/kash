@@ -138,7 +138,7 @@ export const CurrenciesModal = () => {
   const ListFooter =
     favorites.length === 0 && all.length === 0 ? (
       <View className="items-center py-16">
-        <Text style={{ color: C.textMuted, fontSize: 13 }}>
+        <Text style={{ color: C.textMuted, fontSize: 13, lineHeight: 18 }}>
           No currencies match.
         </Text>
       </View>
@@ -148,6 +148,7 @@ export const CurrenciesModal = () => {
           style={{
             fontFamily: FONTS.monoSemi,
             fontSize: 10,
+            lineHeight: 16,
             letterSpacing: 1.6,
             color: C.textMute,
             textTransform: 'uppercase',
@@ -191,6 +192,7 @@ export const CurrenciesModal = () => {
             style={{
               fontFamily: FONTS.sans,
               fontSize: 13,
+              lineHeight: 18,
               color: C.text,
             }}
           />
@@ -198,6 +200,7 @@ export const CurrenciesModal = () => {
             style={{
               fontFamily: FONTS.monoSemi,
               fontSize: 10,
+              lineHeight: 16,
               letterSpacing: 1,
               color: C.textMute,
             }}
