@@ -5816,6 +5816,7 @@ __metadata:
     eslint: "npm:^9.25.0"
     eslint-config-expo: "npm:~10.0.0"
     expo: "npm:~54.0.30"
+    expo-apple-authentication: "npm:^55.0.13"
     expo-auth-session: "npm:~7.0.11"
     expo-blur: "npm:^15.0.8"
     expo-constants: "npm:~18.0.12"
@@ -8395,6 +8396,16 @@ __metadata:
     snapdragon: "npm:^0.8.1"
     to-regex: "npm:^3.0.1"
   checksum: 10c0/3e2fb95d2d7d7231486493fd65db913927b656b6fcdfcce41e139c0991a72204af619ad4acb1be75ed994ca49edb7995ef241dbf8cf44dc3c03d211328428a87
+  languageName: node
+  linkType: hard
+
+"expo-apple-authentication@npm:^55.0.13":
+  version: 55.0.13
+  resolution: "expo-apple-authentication@npm:55.0.13"
+  peerDependencies:
+    expo: "*"
+    react-native: "*"
+  checksum: 10c0/1e5a0d28b95792960eac0708ae54d3f3927cdc5d39331758b802dfdef1dac2e8be6812a15b72a7cd490274c29a9c9e7bc9fbfccff818ab01ba57acd7e05baf9e
   languageName: node
   linkType: hard
 

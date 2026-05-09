@@ -13,4 +13,9 @@ export const CATEGORIES: Category[] = [
   { name: 'Education', color: '#FF5733', type: 'expense', icon: 'GraduationCap' },
   { name: 'Travel', color: '#FF5733', type: 'expense', icon: 'Plane' },
   { name: 'Subscriptions', color: '#FF5733', type: 'expense', icon: 'RefreshCcw' },
+  { name: 'Salary', color: '#3A7D44', type: 'income', icon: 'Banknote' },
+  { name: 'Freelance', color: '#4D8B3A', type: 'income', icon: 'Briefcase' },
+  { name: 'Investments', color: '#2E7D5A', type: 'income', icon: 'TrendingUp' },
+  { name: 'Gifts', color: '#A87332', type: 'income', icon: 'Gift' },
+  { name: 'Other', color: '#7A7469', type: 'income', icon: 'Coins' },
 ];

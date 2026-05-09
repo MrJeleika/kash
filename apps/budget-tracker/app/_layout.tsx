@@ -27,6 +27,7 @@ import {
 import { AddTransactionModal } from '@/components/pages/add-transaction/add-transaction-modal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CurrenciesModal } from '@/components/pages/currencies/currencies-modal';
+import { LanguagesModal } from '@/components/pages/languages/languages-modal';
 import { PeriodSelectorModal } from '@/components/pages/home/period-selector/period-selector-modal';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NewCategoryModal } from '@/components/pages/categories/new-category-modal';
@@ -89,6 +90,7 @@ export default function RootLayout() {
             <AuthGate />
             <AddTransactionModal />
             <CurrenciesModal />
+            <LanguagesModal />
             <PeriodSelectorModal />
             <CategoriesModal />
             <NewCategoryModal />

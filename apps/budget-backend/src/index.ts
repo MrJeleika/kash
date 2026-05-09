@@ -8,6 +8,7 @@ import { processReceipt } from './receipt/receipt';
 import { createRateLimiter } from './utils/rateLimiter';
 import { requireAuth } from './middleware/auth';
 import { meterUsage } from './middleware/usage';
+import { deleteAccount } from './account/account';
 import type { Env } from './types/env';
 
 const app = new Hono();
@@ -77,6 +78,13 @@ app.post(
       );
     }
   }
+);
+
+app.delete(
+  '/account',
+  createRateLimiter(1000 * 60 * 60, 5),
+  requireAuth,
+  deleteAccount
 );
 
 export default app;

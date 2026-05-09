@@ -4,10 +4,18 @@ import * as Linking from 'expo-linking';
 import { makeRedirectUri } from 'expo-auth-session';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  Text,
+  View,
+} from 'react-native';
 import Constants from 'expo-constants';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { C, FONTS } from '@/utils/theme';
 import { KashWordmark } from '@/components/common/header';
+import { LEGAL_PRIVACY_URL, LEGAL_TERMS_URL } from '@/constants/legal';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '0.0.0';
 
@@ -118,6 +126,34 @@ export default function AuthScreen() {
     return () => subscription.remove();
   }, [finalizeOAuthReturn]);
 
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      if (!credential.identityToken) {
+        throw new Error('No identity token returned by Apple');
+      }
+      const { error: signInError } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: credential.identityToken,
+      });
+      if (signInError) throw signInError;
+      setLoading(false);
+      router.replace('/home');
+    } catch (e: any) {
+      setLoading(false);
+      // User canceled the native sheet — not an error worth showing.
+      if (e?.code === 'ERR_REQUEST_CANCELED') return;
+      setError(e instanceof Error ? e.message : 'Apple sign-in failed');
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     oauthHandledRef.current = false;
     setLoading(true);
@@ -207,6 +243,19 @@ export default function AuthScreen() {
 
       {/* Auth */}
       <View className="gap-3">
+        {Platform.OS === 'ios' && (
+          <AppleAuthentication.AppleAuthenticationButton
+            buttonType={
+              AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
+            }
+            buttonStyle={
+              AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+            }
+            cornerRadius={4}
+            style={{ height: 56 }}
+            onPress={handleAppleSignIn}
+          />
+        )}
         <Pressable
           onPress={handleGoogleSignIn}
           disabled={loading}
@@ -265,11 +314,17 @@ export default function AuthScreen() {
           }}
         >
           By continuing you agree to our{' '}
-          <Text style={{ color: C.text, textDecorationLine: 'underline' }}>
+          <Text
+            onPress={() => Linking.openURL(LEGAL_TERMS_URL)}
+            style={{ color: C.text, textDecorationLine: 'underline' }}
+          >
             Terms
           </Text>{' '}
           and{' '}
-          <Text style={{ color: C.text, textDecorationLine: 'underline' }}>
+          <Text
+            onPress={() => Linking.openURL(LEGAL_PRIVACY_URL)}
+            style={{ color: C.text, textDecorationLine: 'underline' }}
+          >
             Privacy
           </Text>
           .

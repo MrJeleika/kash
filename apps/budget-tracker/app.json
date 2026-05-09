@@ -10,11 +10,15 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "usesAppleSignIn": true,
       "infoPlist": {
-        "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to use speech recognition.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use the microphone.",
-        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to take photos of receipts.",
-        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to read photos of receipts from your library."
+        "NSSpeechRecognitionUsageDescription": "Kash uses speech recognition to turn what you say into a transaction entry — for example, \"Spent 12 on coffee\" becomes a logged expense.",
+        "NSMicrophoneUsageDescription": "Kash listens through your microphone so you can log a transaction by speaking it out loud instead of typing.",
+        "NSCameraUsageDescription": "Kash uses the camera to photograph receipts and read the amount, merchant, and date so you can log them as transactions.",
+        "NSPhotoLibraryUsageDescription": "Kash reads receipt photos from your library to extract the amount, merchant, and date for a transaction."
       },
       "bundleIdentifier": "com.mrjeleika8.kash"
     },
@@ -39,6 +43,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-apple-authentication",
       "expo-speech-recognition",
       [
         "expo-image-picker",

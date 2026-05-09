@@ -17,6 +17,7 @@ interface TransactionsState {
     id: string,
     transaction: Partial<NewTransaction>
   ) => void;
+  reassignCategory: (fromName: string, toName: string) => void;
   removeTransaction: (id: string) => void;
   /** Returns visible (non-deleted) transactions. */
   getAllTransactions: () => Transaction[];
@@ -58,6 +59,18 @@ export const useTransactionsStore = create<TransactionsState>()(
           transactions: state.transactions.map((t) =>
             t.id === id
               ? { ...t, ...updatedFields, updatedAt: ts, syncedAt: null }
+              : t
+          ),
+        }));
+      },
+
+      reassignCategory: (fromName, toName) => {
+        if (fromName === toName) return;
+        const ts = now();
+        set((state) => ({
+          transactions: state.transactions.map((t) =>
+            t.categoryName === fromName && !t.deletedAt
+              ? { ...t, categoryName: toName, updatedAt: ts, syncedAt: null }
               : t
           ),
         }));

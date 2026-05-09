@@ -110,20 +110,36 @@ export const useCategoriesStore = create<CategoryStore>()(
       name: STORAGE_KEY,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ categories: state.categories }),
-      version: 2,
+      version: 3,
       migrate: (persisted: unknown, fromVersion) => {
         const state = persisted as Partial<CategoryStore> | undefined;
-        if (!state || fromVersion >= 2) return state as CategoryStore;
+        if (!state) return state as CategoryStore;
         const migratedAt = now();
-        return {
-          ...state,
-          categories: (state.categories ?? []).map((c) => ({
+        let categories = state.categories ?? [];
+
+        if (fromVersion < 2) {
+          categories = categories.map((c) => ({
             ...c,
             id: c.id ?? generateUuid(),
             updatedAt: c.updatedAt ?? migratedAt,
             syncedAt: c.syncedAt ?? null,
-          })),
-        } as CategoryStore;
+          }));
+        }
+
+        if (fromVersion < 3) {
+          const existingNames = new Set(categories.map((c) => c.name));
+          const missing = CATEGORIES.filter(
+            (c) => c.type === 'income' && !existingNames.has(c.name)
+          ).map((c) => ({
+            ...c,
+            id: generateUuid(),
+            updatedAt: migratedAt,
+            syncedAt: null,
+          }));
+          categories = [...categories, ...missing];
+        }
+
+        return { ...state, categories } as CategoryStore;
       },
     }
   )

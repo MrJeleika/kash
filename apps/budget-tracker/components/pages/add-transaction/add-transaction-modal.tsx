@@ -29,6 +29,8 @@ export function AddTransactionModal() {
     transactionToEdit,
     transactionDraft,
     setTransactionDraft,
+    draftSaveOverride,
+    setDraftSaveOverride,
     openDateSheet,
   } = useModalsStore();
 
@@ -91,9 +93,21 @@ export function AddTransactionModal() {
       ? Number(amountInBaseCurrency)
       : amountNum;
 
-    if (transactionToEdit) {
+    if (draftSaveOverride) {
+      draftSaveOverride({
+        type,
+        categoryName,
+        amount: amountNum,
+        amountInBaseCurrency: amountInBaseCurrencyNum,
+        currency,
+        date,
+        note: note || undefined,
+      });
+    } else if (transactionToEdit) {
       updateTransaction(transactionToEdit.id, {
-        amount: isExpense ? amountNum : -amountNum,
+        type,
+        categoryName,
+        amount: isExpense ? -amountNum : amountNum,
         amountInBaseCurrency: isExpense
           ? -amountInBaseCurrencyNum
           : amountInBaseCurrencyNum,
@@ -119,6 +133,7 @@ export function AddTransactionModal() {
 
     setTransactionToEdit(null);
     setTransactionDraft(null);
+    setDraftSaveOverride(null);
     handleClose();
   };
 
@@ -132,6 +147,7 @@ export function AddTransactionModal() {
         setAddTransactionOpen(false);
         setTransactionToEdit(null);
         setTransactionDraft(null);
+        setDraftSaveOverride(null);
       }}
     >
       {/* Top bar: close + segmented + spacer */}

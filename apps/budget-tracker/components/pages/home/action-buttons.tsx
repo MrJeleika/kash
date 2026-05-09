@@ -1,10 +1,21 @@
 import { Pressable, Alert, View } from 'react-native';
-import { AudioLines, Plus, ScanText } from 'lucide-react-native';
+import {
+  AudioLines,
+  Plus,
+  ScanText,
+  Square,
+  Loader2,
+  Check,
+  AlertTriangle,
+  Mic,
+} from 'lucide-react-native';
 import { useModalsStore } from '@/store/modals';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  withRepeat,
+  Easing,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,6 +23,7 @@ import { CloseButton } from '@/components/common/close-button';
 import { useOcrReceipt } from '@/hooks/photo/useOcrReceipt';
 import { captureReceipt } from '@/utils/photo';
 import { C } from '@/utils/theme';
+import { Icon } from '@/components/ui/icon';
 
 const sideButtonStyle = {
   backgroundColor: C.ink,
@@ -31,15 +43,46 @@ const fabStyle = {
   elevation: 10,
 };
 
+const VOICE_BUTTON_ICON = {
+  idle: Mic,
+  listening: Square,
+  reviewing: Mic,
+  processing: Loader2,
+  ready: Check,
+  empty: AudioLines,
+  error: AlertTriangle,
+} as const;
+
 export function ActionButtons() {
   const {
     setAddTransactionOpen,
     setVoiceInputOpen,
     voiceInputOpen,
     setTransactionDraft,
+    voiceState,
+    voiceStopHandler,
   } = useModalsStore();
   const ocr = useOcrReceipt();
   const insets = useSafeAreaInsets();
+  const ActionIcon = VOICE_BUTTON_ICON[voiceState];
+  const iconSpin = useSharedValue(0);
+
+  useEffect(() => {
+    if (voiceState === 'processing') {
+      iconSpin.value = 0;
+      iconSpin.value = withRepeat(
+        withTiming(360, { duration: 900, easing: Easing.linear }),
+        -1,
+        false
+      );
+    } else {
+      iconSpin.value = withTiming(0, { duration: 150 });
+    }
+  }, [voiceState]);
+
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${iconSpin.value}deg` }],
+  }));
 
   const scanTextButtonScale = useSharedValue(1);
   const addTransactionButtonScale = useSharedValue(1);
@@ -165,9 +208,23 @@ export function ActionButtons() {
         <Pressable
           className="size-[64px] rounded-full items-center justify-center active:opacity-80"
           style={fabStyle}
-          onPress={() => setVoiceInputOpen(true)}
+          onPress={() => {
+            if (
+              (voiceState === 'listening' || voiceState === 'reviewing') &&
+              voiceStopHandler
+            ) {
+              voiceStopHandler();
+            }
+          }}
         >
-          <View className="size-[22px]" style={{ backgroundColor: C.paper }} />
+          <Animated.View style={iconStyle}>
+            <Icon
+              icon={ActionIcon}
+              size={26}
+              color={C.textOnInk}
+              strokeWidth={1.8}
+            />
+          </Animated.View>
         </Pressable>
       </Animated.View>
 

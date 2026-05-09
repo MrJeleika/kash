@@ -7,6 +7,7 @@ import { MonoLabel } from '@/components/ui/typography';
 import { useModalsStore } from '@/store/modals';
 import { useSettingsStore } from '@/store/settings';
 import { useCurrencyStore } from '@/store/currency';
+import { getLanguageByCode } from '@/constants/languages';
 import {
   LayoutGrid,
   Sun,
@@ -15,16 +16,20 @@ import {
   Lock,
   FileText,
   Trash2,
+  UserX,
   LogOut,
 } from 'lucide-react-native';
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { Alert, Linking, ScrollView, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import { apiDelete } from '@/lib/api';
 import { useSession } from '@/hooks/auth/useSession';
-import { C, FONTS } from '@/utils/theme';
+import { C } from '@/utils/theme';
+import { LEGAL_PRIVACY_URL, LEGAL_TERMS_URL } from '@/constants/legal';
 
-const APP_VERSION = 'v2.4.0';
+const APP_VERSION = `v${Constants.expoConfig?.version ?? '0.0.0'}`;
 const FALLBACK_EMAIL = 'kash@local';
 
 const handleSignOut = () => {
@@ -64,10 +69,47 @@ const handleDeleteLocalData = () => {
   );
 };
 
+const handleDeleteAccount = () => {
+  Alert.alert(
+    'Delete account',
+    'This permanently deletes your account, every transaction, every category, and your usage history on our servers. This cannot be undone.',
+    [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete account',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await apiDelete('/account');
+          } catch (err: any) {
+            Alert.alert(
+              'Could not delete account',
+              err?.message ?? 'Please try again later.'
+            );
+            return;
+          }
+          await supabase.auth.signOut();
+          await AsyncStorage.clear();
+          router.replace('/');
+        },
+      },
+    ]
+  );
+};
+
+const openLegal = (url: string) => {
+  Linking.openURL(url).catch(() => {
+    Alert.alert('Could not open link', 'Please try again later.');
+  });
+};
+
 export default function SettingsScreen() {
-  const { setCurrenciesModalOpen, setCategoriesModalOpen } = useModalsStore();
-  const { voiceLanguage } = useSettingsStore();
+  const { setCurrenciesModalOpen, setCategoriesModalOpen, setLanguagesModalOpen } =
+    useModalsStore();
+  const { voiceLocale } = useSettingsStore();
   const { currency } = useCurrencyStore();
+  const voiceLanguageLabel =
+    getLanguageByCode(voiceLocale)?.name ?? voiceLocale;
   const session = useSession();
   const email =
     session.status === 'authenticated'
@@ -76,23 +118,7 @@ export default function SettingsScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: C.paper }}>
-      <Header
-        backButton
-        title="SETTINGS"
-        actionButton={
-          <Text
-            style={{
-              fontFamily: FONTS.mono,
-              fontSize: 10,
-              lineHeight: 16,
-              letterSpacing: 1.4,
-              color: C.textMuted,
-            }}
-          >
-            {APP_VERSION}
-          </Text>
-        }
-      />
+      <Header backButton title="SETTINGS" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <ProfileCard email={email} />
@@ -114,7 +140,8 @@ export default function SettingsScreen() {
             <SettingsItem
               icon={Mic}
               label="Voice language"
-              value={voiceLanguage}
+              value={voiceLanguageLabel}
+              onPress={() => setLanguagesModalOpen(true)}
               last
             />
           </SettingsSection>
@@ -129,8 +156,17 @@ export default function SettingsScreen() {
           </SettingsSection>
 
           <SettingsSection label="About">
-            <SettingsItem icon={Lock} label="Privacy policy" />
-            <SettingsItem icon={FileText} label="Terms of use" last />
+            <SettingsItem
+              icon={Lock}
+              label="Privacy policy"
+              onPress={() => openLegal(LEGAL_PRIVACY_URL)}
+            />
+            <SettingsItem
+              icon={FileText}
+              label="Terms of use"
+              onPress={() => openLegal(LEGAL_TERMS_URL)}
+              last
+            />
           </SettingsSection>
 
           <SettingsSection label="Danger Zone">
@@ -145,6 +181,12 @@ export default function SettingsScreen() {
               label="Delete local data"
               variant="destructive"
               onPress={handleDeleteLocalData}
+            />
+            <SettingsItem
+              icon={UserX}
+              label="Delete account"
+              variant="destructive"
+              onPress={handleDeleteAccount}
               last
             />
           </SettingsSection>

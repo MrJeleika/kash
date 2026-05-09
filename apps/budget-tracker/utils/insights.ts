@@ -15,12 +15,6 @@ export interface DailyBucket {
   total: number;
 }
 
-export interface MerchantBucket {
-  name: string;
-  total: number;
-  count: number;
-}
-
 export interface InsightsResult {
   total: number;
   totalExpense: number;
@@ -29,10 +23,7 @@ export interface InsightsResult {
   txCount: number;
   byCategory: CategoryBreakdown[];
   byDay: DailyBucket[];
-  topMerchants: MerchantBucket[];
 }
-
-const TOP_MERCHANTS_LIMIT = 5;
 
 const isInPeriod = (t: Transaction, p: PeriodConfig) =>
   !t.deletedAt && t.date >= p.from && t.date <= p.to;
@@ -83,19 +74,6 @@ export const computeInsights = (
     .map(([date, dayTotal]) => ({ date, total: dayTotal }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  const merchantTotals = new Map<string, MerchantBucket>();
-  for (const t of inPeriod) {
-    if (t.type !== type) continue;
-    const key = (t.merchant || t.categoryName).trim();
-    const cur = merchantTotals.get(key) ?? { name: key, total: 0, count: 0 };
-    cur.total += Math.abs(t.amountInBaseCurrency);
-    cur.count += 1;
-    merchantTotals.set(key, cur);
-  }
-  const topMerchants = Array.from(merchantTotals.values())
-    .sort((a, b) => b.total - a.total)
-    .slice(0, TOP_MERCHANTS_LIMIT);
-
   return {
     total,
     totalExpense,
@@ -104,6 +82,5 @@ export const computeInsights = (
     txCount: inPeriod.length,
     byCategory,
     byDay,
-    topMerchants,
   };
 };

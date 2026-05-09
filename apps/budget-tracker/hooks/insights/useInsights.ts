@@ -6,7 +6,6 @@ import { useMemo } from 'react';
 export type {
   CategoryBreakdown,
   DailyBucket,
-  MerchantBucket,
   InsightsResult,
 } from '@/utils/insights';
 

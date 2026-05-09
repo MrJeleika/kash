@@ -1,6 +1,7 @@
 import { Header } from '@/components/common/header';
 import { ModalBase, ModalBaseRef } from '@/components/common/modal-base';
 import { SelectTransactionType } from '@/components/common/select-transaction-type';
+import { SwipeToDelete } from '@/components/common/swipe-to-delete';
 import { Icon } from '@/components/ui/icon';
 import { useModalsStore } from '@/store/modals';
 import { useCategoriesStore } from '@/store/categories';
@@ -30,7 +31,9 @@ export const CategoriesModal = () => {
   } = useModalsStore();
 
   const { categories } = useCategoriesStore();
+  const removeCategory = useCategoriesStore((s) => s.removeCategory);
   const transactions = useTransactionsStore((s) => s.transactions);
+  const reassignCategory = useTransactionsStore((s) => s.reassignCategory);
 
   const [type, setType] = useState<TransactionType>('expense');
   const [search, setSearch] = useState('');
@@ -78,6 +81,12 @@ export const CategoriesModal = () => {
     if (!cat) return;
     setCategoryToEdit(cat);
     setAddCategoryModalOpen(true);
+  };
+
+  const handleDelete = (name: string) => {
+    if (name === 'Uncategorized') return;
+    reassignCategory(name, 'Uncategorized');
+    removeCategory(name);
   };
 
   return (
@@ -165,11 +174,16 @@ export const CategoriesModal = () => {
               filtered.map((c, i) => {
                 const stats = monthSpend.get(c.name);
                 return (
-                  <Pressable
+                  <SwipeToDelete
                     key={c.name}
+                    enabled={c.name !== 'Uncategorized'}
+                    onDelete={() => handleDelete(c.name)}
+                  >
+                  <Pressable
                     onPress={() => handleEdit(c.name)}
                     className="flex-row items-center px-6 py-3 gap-3 active:opacity-70"
                     style={{
+                      backgroundColor: C.paper,
                       borderBottomWidth: i < filtered.length - 1 ? 1 : 0,
                       borderBottomColor: C.rule,
                     }}
@@ -213,6 +227,7 @@ export const CategoriesModal = () => {
                     )}
                     <Icon icon={ChevronRight} size={14} color={C.textMute} />
                   </Pressable>
+                  </SwipeToDelete>
                 );
               })
             )}

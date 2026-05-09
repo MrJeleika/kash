@@ -61,11 +61,6 @@ export const Header = ({
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
-        {backButton && !closeButtonAction && variant !== 'wordmark' && (
-          <Pressable onPress={() => router.back()} hitSlop={10}>
-            <Icon icon={ChevronLeft} size={20} color={C.ink} />
-          </Pressable>
-        )}
         {closeButtonAction && (
           <Pressable
             onPress={closeButtonAction}
@@ -96,6 +91,29 @@ export const Header = ({
               </>
             )}
           </View>
+        ) : backButton && !closeButtonAction ? (
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={10}
+            className="flex-row items-center gap-3"
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+          >
+            <Icon icon={ChevronLeft} size={20} color={C.ink} />
+            {title ? (
+              <Text
+                style={{
+                  fontFamily: FONTS.monoBold,
+                  fontSize: 12,
+                  lineHeight: 18,
+                  letterSpacing: 2.16,
+                  color: C.ink,
+                  textTransform: 'uppercase',
+                }}
+              >
+                {title}
+              </Text>
+            ) : null}
+          </Pressable>
         ) : title ? (
           <Text
             style={{

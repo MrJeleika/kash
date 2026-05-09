@@ -1,10 +1,29 @@
 import { Category } from '@/types/categories';
-import { Transaction } from '@/types/transactions';
+import { Transaction, TransactionType } from '@/types/transactions';
 import { create } from 'zustand';
 
 export type TransactionDraft = Partial<
   Omit<Transaction, 'id' | 'updatedAt' | 'syncedAt' | 'deletedAt'>
 >;
+
+export type VoiceState =
+  | 'idle'
+  | 'listening'
+  | 'reviewing'
+  | 'processing'
+  | 'ready'
+  | 'empty'
+  | 'error';
+
+export interface DraftSavePayload {
+  type: TransactionType;
+  categoryName: string;
+  amount: number;
+  amountInBaseCurrency: number;
+  currency: string;
+  date: string;
+  note?: string;
+}
 
 interface ModalsState {
   addTransactionOpen: boolean;
@@ -18,8 +37,23 @@ interface ModalsState {
   transactionDraft: TransactionDraft | null;
   setTransactionDraft: (draft: TransactionDraft | null) => void;
 
+  /** When set, the AddTransactionModal forwards Save to this callback instead of mutating the transactions store. */
+  draftSaveOverride: ((payload: DraftSavePayload) => void) | null;
+  setDraftSaveOverride: (
+    override: ((payload: DraftSavePayload) => void) | null
+  ) => void;
+
+  voiceState: VoiceState;
+  setVoiceState: (state: VoiceState) => void;
+
+  voiceStopHandler: (() => void) | null;
+  setVoiceStopHandler: (handler: (() => void) | null) => void;
+
   currenciesModalOpen: boolean;
   setCurrenciesModalOpen: (open: boolean) => void;
+
+  languagesModalOpen: boolean;
+  setLanguagesModalOpen: (open: boolean) => void;
 
   voiceInputOpen: boolean;
   setVoiceInputOpen: (open: boolean) => void;
@@ -56,8 +90,20 @@ export const useModalsStore = create<ModalsState>((set) => ({
   transactionDraft: null,
   setTransactionDraft: (draft) => set({ transactionDraft: draft }),
 
+  draftSaveOverride: null,
+  setDraftSaveOverride: (override) => set({ draftSaveOverride: override }),
+
+  voiceState: 'idle',
+  setVoiceState: (state) => set({ voiceState: state }),
+
+  voiceStopHandler: null,
+  setVoiceStopHandler: (handler) => set({ voiceStopHandler: handler }),
+
   currenciesModalOpen: false,
   setCurrenciesModalOpen: (open) => set({ currenciesModalOpen: open }),
+
+  languagesModalOpen: false,
+  setLanguagesModalOpen: (open) => set({ languagesModalOpen: open }),
 
   voiceInputOpen: false,
   setVoiceInputOpen: (open) => set({ voiceInputOpen: open }),

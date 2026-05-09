@@ -17,15 +17,19 @@ const authHeader = async (): Promise<Record<string, string>> => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export const apiPost = async <T>(path: string, body: unknown): Promise<T> => {
+const request = async <T>(
+  method: 'POST' | 'DELETE',
+  path: string,
+  body?: unknown
+): Promise<T> => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(await authHeader()),
   };
   const res = await fetch(`${API_URL}${path}`, {
-    method: 'POST',
+    method,
     headers,
-    body: JSON.stringify(body),
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
   const text = await res.text();
@@ -46,3 +50,9 @@ export const apiPost = async <T>(path: string, body: unknown): Promise<T> => {
 
   return parsed as T;
 };
+
+export const apiPost = <T>(path: string, body: unknown): Promise<T> =>
+  request<T>('POST', path, body);
+
+export const apiDelete = <T>(path: string): Promise<T> =>
+  request<T>('DELETE', path);

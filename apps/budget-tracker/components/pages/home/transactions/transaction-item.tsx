@@ -1,5 +1,6 @@
 import { useCategoriesStore } from '@/store/categories';
 import { useModalsStore } from '@/store/modals';
+import { useTransactionsStore } from '@/store/transactions';
 import { Transaction } from '@/types/transactions';
 import { formatTime } from '@/utils/format/dates';
 import { formatNumberWithSpaces } from '@/utils/shared';
@@ -15,6 +16,7 @@ import Animated, {
 import React from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { CategoryIcon } from '@/components/common/category-icon';
+import { SwipeToDelete } from '@/components/common/swipe-to-delete';
 import { C, FONTS } from '@/utils/theme';
 
 interface TransactionItemProps {
@@ -28,6 +30,7 @@ export const TransactionItem = ({
 }: TransactionItemProps) => {
   const { getCategoryByName } = useCategoriesStore();
   const { setAddTransactionOpen, setTransactionToEdit } = useModalsStore();
+  const removeTransaction = useTransactionsStore((s) => s.removeTransaction);
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -71,11 +74,13 @@ export const TransactionItem = ({
       entering={FadeInUp.duration(200).delay(index * 20)}
       exiting={FadeOutDown.duration(150)}
     >
+      <SwipeToDelete onDelete={() => removeTransaction(transaction.id)}>
       <GestureDetector gesture={tap}>
         <Animated.View
           style={[
             animatedStyle,
             {
+              backgroundColor: C.paper,
               borderBottomWidth: 1,
               borderBottomColor: C.rule,
             },
@@ -143,6 +148,7 @@ export const TransactionItem = ({
           </View>
         </Animated.View>
       </GestureDetector>
+      </SwipeToDelete>
     </Animated.View>
   );
 };
