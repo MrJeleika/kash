@@ -13,7 +13,7 @@
     "db:types": "supabase gen types typescript --linked > apps/budget-tracker/types/database.types.ts"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
+  "author": "",
   "packageManager": "yarn@4.13.0"
 }
