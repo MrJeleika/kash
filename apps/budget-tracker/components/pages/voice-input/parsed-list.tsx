@@ -35,18 +35,6 @@ export const ParsedList = ({
           fontFamily: FONTS.monoSemi,
           fontSize: 10,
           lineHeight: 16,
-          letterSpacing: 1.4,
-          color: C.textOnInkDim,
-          textTransform: 'uppercase',
-        }}
-      >
-        Extracted · GPT-4o
-      </Text>
-      <Text
-        style={{
-          fontFamily: FONTS.monoSemi,
-          fontSize: 10,
-          lineHeight: 16,
           color: C.red,
         }}
       >

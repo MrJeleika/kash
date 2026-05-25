@@ -1,4 +1,4 @@
-import { Pressable, Alert, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import {
   AudioLines,
   Plus,
@@ -20,7 +20,6 @@ import Animated, {
 import { useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CloseButton } from '@/components/common/close-button';
-import { useOcrReceipt } from '@/hooks/photo/useOcrReceipt';
 import { captureReceipt } from '@/utils/photo';
 import { C } from '@/utils/theme';
 import { Icon } from '@/components/ui/icon';
@@ -58,11 +57,10 @@ export function ActionButtons() {
     setAddTransactionOpen,
     setVoiceInputOpen,
     voiceInputOpen,
-    setTransactionDraft,
     voiceState,
     voiceStopHandler,
+    openPhotoInput,
   } = useModalsStore();
-  const ocr = useOcrReceipt();
   const insets = useSafeAreaInsets();
   const ActionIcon = VOICE_BUTTON_ICON[voiceState];
   const iconSpin = useSharedValue(0);
@@ -140,31 +138,9 @@ export function ActionButtons() {
   }));
 
   const handlePhoto = async () => {
-    try {
-      const uri = await captureReceipt();
-      if (!uri) return;
-      const result = await ocr.mutateAsync({ uri });
-      const tx = result.transaction;
-      const amount = Math.abs(tx.amount || 0);
-      setTransactionDraft({
-        type: tx.type,
-        amount,
-        amountInBaseCurrency: amount,
-        currency: tx.currency || undefined,
-        merchant: tx.merchant || undefined,
-        date: tx.date || new Date().toISOString().split('T')[0],
-        categoryName: tx.categoryName || undefined,
-        baseCurrency: undefined,
-        inputMethod: 'photo',
-      });
-      setAddTransactionOpen(true);
-    } catch (err: any) {
-      const msg =
-        err?.status === 429
-          ? 'Monthly limit reached. Try again next month.'
-          : err?.message || 'Could not read receipt.';
-      Alert.alert('Receipt scan', msg);
-    }
+    const uri = await captureReceipt();
+    if (!uri) return;
+    openPhotoInput(uri);
   };
 
   return (
@@ -178,7 +154,6 @@ export function ActionButtons() {
           className="size-[52px] rounded-full items-center justify-center active:opacity-70"
           style={sideButtonStyle}
           onPress={handlePhoto}
-          disabled={ocr.isPending}
         >
           <ScanText size={20} color={C.textOnInk} strokeWidth={1.6} />
         </Pressable>

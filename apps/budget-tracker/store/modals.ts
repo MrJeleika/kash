@@ -58,6 +58,11 @@ interface ModalsState {
   voiceInputOpen: boolean;
   setVoiceInputOpen: (open: boolean) => void;
 
+  photoInputOpen: boolean;
+  photoInputUri: string | null;
+  openPhotoInput: (uri: string) => void;
+  closePhotoInput: () => void;
+
   periodSelectorModalOpen: boolean;
   setPeriodSelectorModalOpen: (open: boolean) => void;
 
@@ -107,6 +112,11 @@ export const useModalsStore = create<ModalsState>((set) => ({
 
   voiceInputOpen: false,
   setVoiceInputOpen: (open) => set({ voiceInputOpen: open }),
+
+  photoInputOpen: false,
+  photoInputUri: null,
+  openPhotoInput: (uri) => set({ photoInputOpen: true, photoInputUri: uri }),
+  closePhotoInput: () => set({ photoInputOpen: false, photoInputUri: null }),
 
   periodSelectorModalOpen: false,
   setPeriodSelectorModalOpen: (open) => set({ periodSelectorModalOpen: open }),

@@ -4,10 +4,9 @@ import { C, FONTS } from '@/utils/theme';
 interface ProfileCardProps {
   email: string;
   tier?: string;
-  showUpgrade?: boolean;
 }
 
-export function ProfileCard({ email, tier = 'Free tier', showUpgrade = true }: ProfileCardProps) {
+export function ProfileCard({ email, tier = 'Free tier' }: ProfileCardProps) {
   const username = email.split('@')[0];
   const initials = username.slice(0, 2).toUpperCase();
 
@@ -55,21 +54,6 @@ export function ProfileCard({ email, tier = 'Free tier', showUpgrade = true }: P
           {email} · {tier}
         </Text>
       </View>
-      {showUpgrade && (
-        <View className="px-2 py-1" style={{ backgroundColor: C.redDim }}>
-          <Text
-            style={{
-              fontFamily: FONTS.monoBold,
-              fontSize: 9,
-              lineHeight: 15,
-              letterSpacing: 1.2,
-              color: C.redDeep,
-            }}
-          >
-            UPGRADE
-          </Text>
-        </View>
-      )}
     </View>
   );
 }

@@ -46,7 +46,19 @@ function parseFragment(url: string): URLSearchParams {
 export default function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [appleAvailable, setAppleAvailable] = useState(false);
   const oauthHandledRef = useRef(false);
+
+  // The native module ships with the dev client but isn't in Expo Go, and an
+  // older dev-client build may pre-date adding expo-apple-authentication —
+  // rendering the button directly in that case shows an "Unimplemented
+  // component" placeholder. Probe first.
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    AppleAuthentication.isAvailableAsync()
+      .then(setAppleAvailable)
+      .catch(() => setAppleAvailable(false));
+  }, []);
 
   const finalizeOAuthReturn = useCallback(
     async (url: string | null | undefined) => {
@@ -243,7 +255,7 @@ export default function AuthScreen() {
 
       {/* Auth */}
       <View className="gap-3">
-        {Platform.OS === 'ios' && (
+        {Platform.OS === 'ios' && appleAvailable && (
           <AppleAuthentication.AppleAuthenticationButton
             buttonType={
               AppleAuthentication.AppleAuthenticationButtonType.CONTINUE

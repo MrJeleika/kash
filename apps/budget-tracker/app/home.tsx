@@ -1,4 +1,5 @@
 import { ActionButtons } from '@/components/pages/home/action-buttons';
+import { PhotoInput } from '@/components/pages/photo-input/photo-input';
 import { VoiceInput } from '@/components/pages/voice-input/voice-input';
 import { Icon } from '@/components/ui/icon';
 import { Eyebrow, HeroAmount } from '@/components/ui/typography';
@@ -126,6 +127,7 @@ export default function HomeScreen() {
 
       <ActionButtons />
       <VoiceInput />
+      <PhotoInput />
     </View>
   );
 }

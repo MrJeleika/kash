@@ -26,6 +26,7 @@ import { router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { apiDelete } from '@/lib/api';
 import { useSession } from '@/hooks/auth/useSession';
+import { useUsage } from '@/hooks/usage/useUsage';
 import { C } from '@/utils/theme';
 import { LEGAL_PRIVACY_URL, LEGAL_TERMS_URL } from '@/constants/legal';
 
@@ -115,6 +116,7 @@ export default function SettingsScreen() {
     session.status === 'authenticated'
       ? session.session.user.email ?? FALLBACK_EMAIL
       : FALLBACK_EMAIL;
+  const { data: usage } = useUsage();
 
   return (
     <View className="flex-1" style={{ backgroundColor: C.paper }}>
@@ -122,7 +124,7 @@ export default function SettingsScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <ProfileCard email={email} />
-        <UsageMeter used={0} limit={10} />
+        <UsageMeter used={usage?.used ?? 0} limit={usage?.limit ?? 10} />
 
         <View className="pt-4">
           <SettingsSection label="Money">

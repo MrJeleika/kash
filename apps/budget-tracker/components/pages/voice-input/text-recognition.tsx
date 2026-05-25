@@ -204,7 +204,7 @@ const ProcessingHint = () => (
       textTransform: 'uppercase',
     }}
   >
-    ● Processing · GPT-4o
+    ● Processing
   </Text>
 );
 
