@@ -271,8 +271,8 @@ export default function AuthScreen() {
         <Pressable
           onPress={handleGoogleSignIn}
           disabled={loading}
-          className="h-14 flex-row items-center justify-center gap-3 active:opacity-85"
-          style={{ backgroundColor: C.ink, borderRadius: 4 }}
+          className="flex-row items-center justify-center gap-2 active:opacity-85"
+          style={{ height: 56, backgroundColor: C.ink, borderRadius: 4 }}
         >
           {loading ? (
             <ActivityIndicator color={C.textOnInk} size="small" />
@@ -281,8 +281,8 @@ export default function AuthScreen() {
               <Text
                 style={{
                   fontFamily: FONTS.sansBold,
-                  fontSize: 16,
-                  lineHeight: 22,
+                  fontSize: 20,
+                  lineHeight: 24,
                   color: C.textOnInk,
                 }}
               >
@@ -290,14 +290,13 @@ export default function AuthScreen() {
               </Text>
               <Text
                 style={{
-                  fontFamily: FONTS.monoSemi,
-                  fontSize: 12,
-                  lineHeight: 18,
-                  letterSpacing: 1.92,
+                  fontFamily: FONTS.sansBold,
+                  fontSize: 20,
+                  lineHeight: 24,
                   color: C.textOnInk,
                 }}
               >
-                CONTINUE WITH GOOGLE
+                Continue with Google
               </Text>
             </>
           )}
